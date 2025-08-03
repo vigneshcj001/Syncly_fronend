@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   FaMapMarkerAlt,
   FaUser,
@@ -13,6 +14,23 @@ import {
 } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { MdVerified } from "react-icons/md";
+
+const InfoItem = ({ icon: Icon, label, value }) => (
+  <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+    <Icon /> {label}: <span className="font-medium">{value || 0}</span>
+  </div>
+);
+
+const TagList = ({ items, className }) =>
+  items?.length > 0 ? (
+    items.map((item, idx) => (
+      <span key={idx} className={`px-3 py-1 rounded-full text-xs ${className}`}>
+        {item}
+      </span>
+    ))
+  ) : (
+    <span className="text-gray-500">None listed</span>
+  );
 
 const ProfileView = ({ profile }) => {
   const {
@@ -36,16 +54,18 @@ const ProfileView = ({ profile }) => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-xl mt-10">
-      {/* Profile Header */}
+      {/* Header */}
       <div className="flex items-center gap-6">
         <img
           src={avatar}
-          alt="Profile Avatar"
+          alt="Avatar"
           className="w-28 h-28 rounded-full border-4 border-blue-400 object-cover"
         />
         <div>
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-            {userName}
+            <Link to={`/user/${userName}`} className="hover:underline">
+              {userName}
+            </Link>
             {isVerified && <MdVerified className="text-blue-500 text-xl" />}
           </h2>
           <p className="text-gray-600 dark:text-gray-300 flex items-center gap-2">
@@ -57,85 +77,65 @@ const ProfileView = ({ profile }) => {
         </div>
       </div>
 
-      {/* Details Section */}
+      {/* Info */}
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-        <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-          <FaUser /> Role: <span className="font-medium">{role}</span>
-        </div>
-        <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-          <FaStar /> Account:{" "}
-          <span className="font-medium capitalize">{accountType}</span>
-        </div>
-        <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-          <FaMapMarkerAlt /> Location:{" "}
-          <span className="font-medium">{location || "Unknown"}</span>
-        </div>
-        <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-          <FaUserFriends /> Mentorship:{" "}
-          <span className="font-medium capitalize">{mentorshipRole}</span>
-        </div>
-        <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-          🤝 Match Type:{" "}
-          <span className="font-medium capitalize">
-            {preferences?.matchType}
-          </span>
-        </div>
-        <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-          ⭐ Reputation Score:{" "}
-          <span className="font-medium">{reputationScore}</span>
-        </div>
-        <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-          📍 Following:{" "}
-          <span className="font-medium">{following?.length || 0}</span>
-        </div>
-        <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-          📌 Followers:{" "}
-          <span className="font-medium">{followers?.length || 0}</span>
-        </div>
+        <InfoItem icon={FaUser} label="Role" value={role} />
+        <InfoItem icon={FaStar} label="Account" value={accountType} />
+        <InfoItem icon={FaMapMarkerAlt} label="Location" value={location} />
+        <InfoItem
+          icon={FaUserFriends}
+          label="Mentorship"
+          value={mentorshipRole}
+        />
+        <InfoItem
+          icon={() => <>🤝</>}
+          label="Match Type"
+          value={preferences?.matchType}
+        />
+        <InfoItem
+          icon={() => <>⭐</>}
+          label="Reputation Score"
+          value={reputationScore}
+        />
+        <InfoItem
+          icon={() => <>📍</>}
+          label="Following"
+          value={following?.length}
+        />
+        <InfoItem
+          icon={() => <>📌</>}
+          label="Followers"
+          value={followers?.length}
+        />
       </div>
 
-      {/* Stack & Skills */}
+      {/* Stack */}
       <div className="mt-6">
         <h3 className="font-semibold text-lg text-gray-800 dark:text-white mb-2 flex items-center gap-2">
           <FaCode /> Tech Stack
         </h3>
         <div className="flex flex-wrap gap-2">
-          {stack?.length > 0 ? (
-            stack.map((item, idx) => (
-              <span
-                key={idx}
-                className="px-3 py-1 bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-white rounded-full text-xs"
-              >
-                {item}
-              </span>
-            ))
-          ) : (
-            <span className="text-gray-500">No stack specified</span>
-          )}
+          <TagList
+            items={stack}
+            className="bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-white"
+          />
         </div>
       </div>
 
+      {/* Skills */}
       <div className="mt-4">
         <h3 className="font-semibold text-lg text-gray-800 dark:text-white mb-2">
           Skills
         </h3>
         <div className="flex flex-wrap gap-2">
-          {skills?.length > 0 ? (
-            skills.map((item, idx) => (
-              <span
-                key={idx}
-                className="px-3 py-1 bg-green-100 dark:bg-green-800 text-green-700 dark:text-white rounded-full text-xs"
-              >
-                {item}
-              </span>
-            ))
-          ) : (
-            <span className="text-gray-500">No skills listed</span>
-          )}
+          <TagList
+            items={skills}
+            className="bg-green-100 dark:bg-green-800 text-green-700 dark:text-white"
+          />
         </div>
       </div>
 
-      {/* Social Links */}
+      {/* Socials */}
       {socialLinks && (
         <div className="mt-6">
           <h3 className="font-semibold text-lg text-gray-800 dark:text-white mb-2">

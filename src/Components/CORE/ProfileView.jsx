@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   FaMapMarkerAlt,
   FaUser,
@@ -62,7 +63,9 @@ const ProfileView = ({ profile }) => {
         />
         <div>
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-            {userName}
+            <Link to={`/user/${userName}`} className="hover:underline">
+              {userName}
+            </Link>
             {isVerified && <MdVerified className="text-blue-500 text-xl" />}
           </h2>
           <p className="text-gray-600 dark:text-gray-300 flex items-center gap-2">

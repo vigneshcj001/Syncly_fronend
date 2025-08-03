@@ -5,8 +5,8 @@ import { useDispatch } from "react-redux";
 import { addUser } from "../../../redux/userSlice";
 
 const Login = () => {
-  const [emailID, setEmailID] = useState("");
-  const [password, setPassword] = useState("");
+  const [emailID, setEmailID] = useState("vigneshwaran@gmail.com");
+  const [password, setPassword] = useState("jVIG@020901");
   const [errorMsg, setErrorMsg] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -26,10 +26,10 @@ const Login = () => {
         setErrorMsg(res.data.message || "Login failed");
       }
     } catch (error) {
-      setErrorMsg(
+      const msg =
         error?.response?.data?.message ||
-          "An unexpected error occurred during login."
-      );
+        "An unexpected error occurred during login.";
+      setErrorMsg(msg);
     } finally {
       setIsLoading(false);
     }
@@ -38,16 +38,14 @@ const Login = () => {
   return (
     <div className="w-full min-h-screen bg-black text-white flex items-center justify-center px-4">
       <div className="w-full h-full max-w-5xl flex flex-col md:flex-row rounded-lg overflow-hidden shadow-lg bg-[#111]">
-        {/* Left - Logo Image */}
         <div className="relative hidden md:block w-1/2 h-full bg-black">
           <img
-            src="/logo_page.png"
+            src="/login_page.png"
             alt="Syncly Logo"
             className="h-full w-full object-contain p-10 dark:brightness-[0.6]"
           />
         </div>
 
-        {/* Right - Form */}
         <div className="w-full md:w-1/2 p-8 md:p-12">
           <h1 className="text-3xl font-bold mb-2">Welcome Back!</h1>
           <p className="text-gray-400 mb-6 text-sm">
@@ -61,33 +59,23 @@ const Login = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm mb-1">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={emailID}
-                onChange={(e) => setEmailID(e.target.value)}
-                required
-                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
-            </div>
+            <input
+              type="email"
+              placeholder="Email"
+              value={emailID}
+              onChange={(e) => setEmailID(e.target.value)}
+              required
+              className="w-full p-3 bg-gray-800 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
 
-            <div>
-              <label htmlFor="password" className="block text-sm mb-1">
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
-            </div>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full p-3 bg-gray-800 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
 
             <button
               type="submit"
@@ -108,18 +96,6 @@ const Login = () => {
             </Link>
           </p>
         </div>
-      </div>
-
-      <div className="absolute bottom-4 w-full text-center text-xs text-gray-500">
-        By continuing, you agree to our{" "}
-        <a href="#" className="underline">
-          Terms of Service
-        </a>{" "}
-        and{" "}
-        <a href="#" className="underline">
-          Privacy Policy
-        </a>
-        .
       </div>
     </div>
   );
