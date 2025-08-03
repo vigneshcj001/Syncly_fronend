@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../../utils/api";
 
 const Signup = () => {
@@ -18,48 +18,42 @@ const Signup = () => {
     setErrorMsg(null);
     setSuccessMsg(null);
     setIsLoading(true);
+
     try {
       await api.post("/auth/signup", {
         userName: form.name,
         emailID: form.email,
         password: form.password,
       });
+
       setSuccessMsg("Signup successful! Redirecting...");
       setTimeout(() => navigate("/login"), 1500);
     } catch (error) {
-      const msg =
-        error?.response?.data?.message ||
-        (Array.isArray(error?.response?.data?.errors)
-          ? error.response.data.errors.join(", ")
-          : "Unexpected error during signup.");
-      setErrorMsg(msg);
+      setErrorMsg(
+        error?.response?.data?.message || "Unexpected error during signup."
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="w-full min-h-screen bg-black text-white flex items-center justify-center px-4">
-      <div className="w-full h-full max-w-5xl flex flex-col md:flex-row-reverse rounded-lg overflow-hidden shadow-lg bg-[#111]">
-        <div className="relative hidden md:block w-1/2 h-full bg-black">
-          <img
-            src="/login_page.png"
-            alt="Signup Visual"
-            className="h-full w-full object-contain p-10 dark:brightness-[0.6]"
-          />
-        </div>
-
+    <div className="flex min-h-screen items-center justify-center bg-black px-4 text-white">
+      <div className="w-full max-w-5xl bg-[#111] rounded-lg shadow-lg flex flex-col md:flex-row overflow-hidden">
+        {/* Left - Form */}
         <div className="w-full md:w-1/2 p-8 md:p-12">
-          <h2 className="text-3xl font-bold mb-2">Create an Account</h2>
-          <p className="text-gray-400 mb-6 text-sm">Sign up to join Syncly</p>
+          <h2 className="text-3xl font-bold mb-2">Create your account</h2>
+          <p className="text-sm text-gray-400 mb-6">Start using Syncly</p>
 
           {errorMsg && (
-            <p className="text-red-500 text-sm text-center mb-3">{errorMsg}</p>
+            <div className="mb-4 text-red-400 text-sm text-center bg-red-500/20 px-3 py-2 rounded">
+              {errorMsg}
+            </div>
           )}
           {successMsg && (
-            <p className="text-green-400 text-sm text-center mb-3">
+            <div className="mb-4 text-green-400 text-sm text-center bg-green-500/20 px-3 py-2 rounded">
               {successMsg}
-            </p>
+            </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -70,7 +64,7 @@ const Signup = () => {
               value={form.name}
               onChange={handleChange}
               required
-              className="w-full p-3 rounded bg-gray-800 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full p-3 bg-gray-800 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
             <input
               type="email"
@@ -79,7 +73,7 @@ const Signup = () => {
               value={form.email}
               onChange={handleChange}
               required
-              className="w-full p-3 rounded bg-gray-800 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full p-3 bg-gray-800 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
             <input
               type="password"
@@ -88,18 +82,18 @@ const Signup = () => {
               value={form.password}
               onChange={handleChange}
               required
-              className="w-full p-3 rounded bg-gray-800 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full p-3 bg-gray-800 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-white text-black py-2 rounded-md font-semibold hover:bg-gray-200 transition disabled:opacity-50"
+              className="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition disabled:opacity-50"
             >
               {isLoading ? "Signing up..." : "Sign up"}
             </button>
           </form>
 
-          <p className="text-sm text-center pt-4 text-gray-400">
+          <p className="mt-6 text-sm text-center text-gray-400">
             Already have an account?{" "}
             <Link
               to="/login"
@@ -109,6 +103,27 @@ const Signup = () => {
             </Link>
           </p>
         </div>
+
+        {/* Right - Image */}
+        <div className="relative hidden md:block w-1/2 bg-black">
+          <img
+            src="/login_page.png"
+            alt="Signup Illustration"
+            className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.3] dark:grayscale"
+          />
+        </div>
+      </div>
+
+      <div className="absolute bottom-4 w-full text-center text-xs text-gray-500">
+        By signing up, you agree to our{" "}
+        <a href="#" className="underline">
+          Terms of Service
+        </a>{" "}
+        and{" "}
+        <a href="#" className="underline">
+          Privacy Policy
+        </a>
+        .
       </div>
     </div>
   );

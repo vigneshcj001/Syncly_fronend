@@ -1,10 +1,11 @@
+// src/App.jsx
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { addUser } from "./redux/userSlice";
 import Login from "./Components/pages/Auth/Login";
 import Signup from "./Components/pages/Auth/Signup";
-import Body from "./Components/CORE/Body";
+import Body from "./Components/CORE/Body"
 import ProtectedRoute from "./Components/CORE/ProtectedRoute";
 
 function App() {
@@ -31,11 +32,14 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public Routes */}
         <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
         <Route
           path="/signup"
           element={user ? <Navigate to="/" /> : <Signup />}
         />
+
+        {/* Catch-all: Protected Routes */}
         <Route
           path="/*"
           element={

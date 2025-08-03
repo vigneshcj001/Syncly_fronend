@@ -27,12 +27,9 @@ const Signup = () => {
       setSuccessMsg("Signup successful! Redirecting...");
       setTimeout(() => navigate("/login"), 1500);
     } catch (error) {
-      const msg =
-        error?.response?.data?.message ||
-        (Array.isArray(error?.response?.data?.errors)
-          ? error.response.data.errors.join(", ")
-          : "Unexpected error during signup.");
-      setErrorMsg(msg);
+      setErrorMsg(
+        error?.response?.data?.message || "Unexpected error during signup."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -41,14 +38,16 @@ const Signup = () => {
   return (
     <div className="w-full min-h-screen bg-black text-white flex items-center justify-center px-4">
       <div className="w-full h-full max-w-5xl flex flex-col md:flex-row-reverse rounded-lg overflow-hidden shadow-lg bg-[#111]">
+        {/* Right - Image */}
         <div className="relative hidden md:block w-1/2 h-full bg-black">
           <img
-            src="/login_page.png"
+            src="/public/login_page.png"
             alt="Signup Visual"
             className="h-full w-full object-contain p-10 dark:brightness-[0.6]"
           />
         </div>
 
+        {/* Left - Form */}
         <div className="w-full md:w-1/2 p-8 md:p-12">
           <h2 className="text-3xl font-bold mb-2">Create an Account</h2>
           <p className="text-gray-400 mb-6 text-sm">Sign up to join Syncly</p>
@@ -109,6 +108,18 @@ const Signup = () => {
             </Link>
           </p>
         </div>
+      </div>
+
+      <div className="absolute bottom-4 w-full text-center text-xs text-gray-500">
+        By signing up, you agree to our{" "}
+        <a href="#" className="underline">
+          Terms of Service
+        </a>{" "}
+        and{" "}
+        <a href="#" className="underline">
+          Privacy Policy
+        </a>
+        .
       </div>
     </div>
   );

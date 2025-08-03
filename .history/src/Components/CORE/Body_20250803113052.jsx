@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { addUser } from "../../redux/userSlice";
 import { api } from "../../utils/api";
 import ProfileView from "./ProfileView";
-import Logout from "./Logout"
+
 const Body = () => {
   const [profile, setProfile] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
@@ -33,10 +33,6 @@ const Body = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-black p-4">
-      <div className="flex justify-end">
-        <Logout />
-      </div>
-
       {profile ? (
         <ProfileView profile={profile} />
       ) : (

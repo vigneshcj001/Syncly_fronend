@@ -27,83 +27,78 @@ const Signup = () => {
       setSuccessMsg("Signup successful! Redirecting...");
       setTimeout(() => navigate("/login"), 1500);
     } catch (error) {
-      const msg =
-        error?.response?.data?.message ||
-        (Array.isArray(error?.response?.data?.errors)
-          ? error.response.data.errors.join(", ")
-          : "Unexpected error during signup.");
-      setErrorMsg(msg);
+      setErrorMsg(error?.response?.data?.message || "Unexpected signup error.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="w-full min-h-screen bg-black text-white flex items-center justify-center px-4">
-      <div className="w-full h-full max-w-5xl flex flex-col md:flex-row-reverse rounded-lg overflow-hidden shadow-lg bg-[#111]">
-        <div className="relative hidden md:block w-1/2 h-full bg-black">
+    <div className="min-h-screen w-full bg-black flex items-center justify-center px-4 text-white">
+      <div className="w-full max-w-6xl bg-[#111] rounded-lg overflow-hidden shadow-md flex flex-col md:flex-row-reverse">
+        {/* Image Right */}
+        <div className="w-full md:w-1/2 bg-black flex items-center justify-center">
           <img
-            src="/login_page.png"
+            src="/logo_page.png"
             alt="Signup Visual"
-            className="h-full w-full object-contain p-10 dark:brightness-[0.6]"
+            className="w-full h-full object-contain p-10"
           />
         </div>
 
-        <div className="w-full md:w-1/2 p-8 md:p-12">
-          <h2 className="text-3xl font-bold mb-2">Create an Account</h2>
-          <p className="text-gray-400 mb-6 text-sm">Sign up to join Syncly</p>
+        {/* Form Left */}
+        <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+          <h2 className="text-3xl font-bold mb-2">Create Account</h2>
+          <p className="text-sm text-gray-400 mb-6">
+            Join Syncly and start connecting!
+          </p>
 
-          {errorMsg && (
-            <p className="text-red-500 text-sm text-center mb-3">{errorMsg}</p>
-          )}
+          {errorMsg && <p className="text-red-500 text-sm mb-3">{errorMsg}</p>}
           {successMsg && (
-            <p className="text-green-400 text-sm text-center mb-3">
-              {successMsg}
-            </p>
+            <p className="text-green-400 text-sm mb-3">{successMsg}</p>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="text"
               name="name"
-              placeholder="Name"
               value={form.name}
               onChange={handleChange}
+              placeholder="Your name"
               required
-              className="w-full p-3 rounded bg-gray-800 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full p-3 bg-gray-800 border border-gray-600 rounded"
             />
             <input
               type="email"
               name="email"
-              placeholder="Email"
               value={form.email}
               onChange={handleChange}
+              placeholder="Email"
               required
-              className="w-full p-3 rounded bg-gray-800 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full p-3 bg-gray-800 border border-gray-600 rounded"
             />
             <input
               type="password"
               name="password"
-              placeholder="Password"
               value={form.password}
               onChange={handleChange}
+              placeholder="Password"
               required
-              className="w-full p-3 rounded bg-gray-800 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full p-3 bg-gray-800 border border-gray-600 rounded"
             />
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-white text-black py-2 rounded-md font-semibold hover:bg-gray-200 transition disabled:opacity-50"
+              className="w-full py-2 bg-white text-black rounded hover:bg-gray-200 transition disabled:opacity-50"
             >
               {isLoading ? "Signing up..." : "Sign up"}
             </button>
           </form>
 
-          <p className="text-sm text-center pt-4 text-gray-400">
+          <p className="text-sm text-gray-400 text-center pt-4">
             Already have an account?{" "}
             <Link
               to="/login"
-              className="text-white font-medium hover:underline"
+              className="text-white font-semibold hover:underline"
             >
               Login
             </Link>

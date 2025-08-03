@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Signup from "./Components/pages/Auth/Signup";
+import Login from "./Components/pages/Auth/Login";
 import { useSelector, useDispatch } from "react-redux";
 import { addUser } from "./redux/userSlice";
-import Login from "./Components/pages/Auth/Login";
-import Signup from "./Components/pages/Auth/Signup";
 import Body from "./Components/CORE/Body";
-import ProtectedRoute from "./Components/CORE/ProtectedRoute";
 
 function App() {
   const user = useSelector((state) => state.user);
@@ -31,19 +30,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
-        <Route
-          path="/signup"
-          element={user ? <Navigate to="/" /> : <Signup />}
-        />
-        <Route
-          path="/*"
-          element={
-            <ProtectedRoute>
-              <Body />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/" element={user ? <Body /> : <Navigate to="/login" />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );

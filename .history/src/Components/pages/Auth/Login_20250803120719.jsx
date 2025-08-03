@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../../utils/api";
 import { useDispatch } from "react-redux";
 import { addUser } from "../../../redux/userSlice";
@@ -16,6 +16,7 @@ const Login = () => {
     e.preventDefault();
     setErrorMsg(null);
     setIsLoading(true);
+
     try {
       const res = await api.post("/auth/login", { emailID, password });
       if (res.data.success) {
@@ -25,35 +26,35 @@ const Login = () => {
       } else {
         setErrorMsg(res.data.message || "Login failed");
       }
-    } catch (error) {
-      const msg =
-        error?.response?.data?.message ||
-        "An unexpected error occurred during login.";
-      setErrorMsg(msg);
+    } catch (err) {
+      setErrorMsg(
+        err?.response?.data?.message ||
+          "An unexpected error occurred during login."
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="w-full min-h-screen bg-black text-white flex items-center justify-center px-4">
-      <div className="w-full h-full max-w-5xl flex flex-col md:flex-row rounded-lg overflow-hidden shadow-lg bg-[#111]">
-        <div className="relative hidden md:block w-1/2 h-full bg-black">
+    <div className="flex min-h-screen items-center justify-center bg-black px-4 text-white">
+      <div className="w-full max-w-5xl bg-[#111] rounded-lg shadow-lg flex flex-col md:flex-row overflow-hidden">
+        {/* Left - Image */}
+        <div className="relative hidden md:block w-1/2 bg-black">
           <img
             src="/login_page.png"
-            alt="Syncly Logo"
-            className="h-full w-full object-contain p-10 dark:brightness-[0.6]"
+            alt="Login"
+            className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.3] dark:grayscale"
           />
         </div>
 
+        {/* Right - Form */}
         <div className="w-full md:w-1/2 p-8 md:p-12">
-          <h1 className="text-3xl font-bold mb-2">Welcome Back!</h1>
-          <p className="text-gray-400 mb-6 text-sm">
-            Login to your Syncly account
-          </p>
+          <h2 className="text-3xl font-bold mb-2">Welcome back</h2>
+          <p className="text-gray-400 text-sm mb-6">Login to your account</p>
 
           {errorMsg && (
-            <div className="bg-red-500/20 text-red-400 p-2 rounded text-sm mb-4 text-center">
+            <div className="mb-4 text-red-400 text-sm text-center bg-red-500/20 px-3 py-2 rounded">
               {errorMsg}
             </div>
           )}
@@ -67,7 +68,6 @@ const Login = () => {
               required
               className="w-full p-3 bg-gray-800 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
-
             <input
               type="password"
               placeholder="Password"
@@ -76,7 +76,6 @@ const Login = () => {
               required
               className="w-full p-3 bg-gray-800 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
-
             <button
               type="submit"
               disabled={isLoading}
@@ -86,7 +85,7 @@ const Login = () => {
             </button>
           </form>
 
-          <p className="text-center text-sm pt-4 text-gray-400">
+          <p className="mt-6 text-center text-sm text-gray-400">
             Don’t have an account?{" "}
             <Link
               to="/signup"
@@ -96,6 +95,18 @@ const Login = () => {
             </Link>
           </p>
         </div>
+      </div>
+
+      <div className="absolute bottom-4 w-full text-center text-xs text-gray-500">
+        By continuing, you agree to our{" "}
+        <a href="#" className="underline">
+          Terms of Service
+        </a>{" "}
+        and{" "}
+        <a href="#" className="underline">
+          Privacy Policy
+        </a>
+        .
       </div>
     </div>
   );
