@@ -36,8 +36,8 @@ const Login = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-black text-white flex items-center justify-center px-4">
-      <div className="w-full h-full max-w-5xl flex flex-col md:flex-row rounded-lg overflow-hidden shadow-lg bg-[#111]">
+    <div className="w-full min-h-screen bg-white dark:bg-black text-black dark:text-white flex items-center justify-center px-4">
+      <div className="w-full h-full max-w-5xl flex flex-col md:flex-row rounded-lg overflow-hidden shadow-lg bg-gray-100 dark:bg-[#111]">
         <div className="relative hidden md:block w-1/2 h-full bg-black">
           <img
             src="/login_page.png"

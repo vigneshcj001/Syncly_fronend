@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "../../../utils/api";
-
 const Signup = () => {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [errorMsg, setErrorMsg] = useState(null);
@@ -39,8 +38,8 @@ const Signup = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-black text-white flex items-center justify-center px-4">
-      <div className="w-full h-full max-w-5xl flex flex-col md:flex-row-reverse rounded-lg overflow-hidden shadow-lg bg-[#111]">
+    <div className="w-full min-h-screen bg-white dark:bg-black text-black dark:text-white flex items-center justify-center px-4">
+      <div className="w-full h-full max-w-5xl flex flex-col md:flex-row-reverse rounded-lg overflow-hidden shadow-lg bg-gray-100 dark:bg-[#111]">
         <div className="relative hidden md:block w-1/2 h-full bg-black">
           <img
             src="/login_page.png"

@@ -6,6 +6,7 @@ import Login from "./Components/pages/Auth/Login";
 import Signup from "./Components/pages/Auth/Signup";
 import Body from "./Components/CORE/Body";
 import ProtectedRoute from "./Components/CORE/ProtectedRoute";
+import Feed from "./Components/Feed/Feed";
 
 function App() {
   const user = useSelector((state) => state.user);
@@ -43,6 +44,14 @@ function App() {
               <Body />
             </ProtectedRoute>
           }
+        />
+        <Route
+        path="/feed"
+        element={
+          <ProtectedRoute>
+            <Feed/>
+          </ProtectedRoute>
+        }
         />
       </Routes>
     </BrowserRouter>
