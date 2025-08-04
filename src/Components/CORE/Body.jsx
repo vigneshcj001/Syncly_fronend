@@ -4,11 +4,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../../redux/userSlice";
 import { api } from "../../utils/api";
 import ProfileView from "./ProfileView";
-import Logout from "./Logout";
+import Logout from "../pages/Auth/Logout";
+import LiveProfileEditor from "./LiveProfileEditor";
 
 const Body = () => {
   const [profile, setProfile] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
+  const [editMode, setEditMode] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userData = useSelector((store) => store.user);
@@ -20,8 +22,8 @@ const Body = () => {
         const { success, profile, message } = res.data;
 
         if (success) {
-          dispatch(addUser(profile)); // update redux store
-          setProfile(profile); // update local state
+          dispatch(addUser(profile));
+          setProfile(profile);
         } else {
           setErrorMsg(message || "Profile not found");
         }
@@ -31,7 +33,6 @@ const Body = () => {
       }
     };
 
-    // check if profile is already in Redux and valid
     if (!userData || !userData.emailID) {
       fetchProfile();
     } else {
@@ -41,12 +42,24 @@ const Body = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-black p-4">
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center mb-4">
         <Logout />
+        {profile && (
+          <button
+            onClick={() => setEditMode(!editMode)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
+          >
+            {editMode ? "View Profile" : "Edit Profile"}
+          </button>
+        )}
       </div>
 
       {profile ? (
-        <ProfileView profile={profile} />
+        editMode ? (
+          <LiveProfileEditor profile={profile} />
+        ) : (
+          <ProfileView profile={profile} />
+        )
       ) : (
         <p className="text-center text-lg text-gray-600 dark:text-white">
           {errorMsg || "Loading..."}

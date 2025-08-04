@@ -7,6 +7,7 @@ import Signup from "./Components/pages/Auth/Signup";
 import Body from "./Components/CORE/Body";
 import ProtectedRoute from "./Components/CORE/ProtectedRoute";
 import Feed from "./Components/Feed/Feed";
+import LiveProfileEditor from "./Components/CORE/LiveProfileEditor";
 
 function App() {
   const user = useSelector((state) => state.user);
@@ -46,12 +47,12 @@ function App() {
           }
         />
         <Route
-        path="/feed"
-        element={
-          <ProtectedRoute>
-            <Feed/>
-          </ProtectedRoute>
-        }
+          path="/feed"
+          element={
+            <ProtectedRoute>
+              <Feed />
+            </ProtectedRoute>
+          }
         />
       </Routes>
     </BrowserRouter>

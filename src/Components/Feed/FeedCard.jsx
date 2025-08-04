@@ -160,18 +160,21 @@ const FeedCard = ({ profile }) => {
 
       {/* Footer Actions */}
       <div className="flex justify-center gap-4 mt-2">
-        <button
-          className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-600 dark:text-white p-2 rounded-full transition"
-          title="Ghost"
-        >
-          <TbGhost2Filled size={32} />
-        </button>
+        
+
         <button
           className="bg-blue-100 hover:bg-blue-200 dark:bg-blue-800 dark:hover:bg-blue-700 text-blue-600 dark:text-white p-2 rounded-full transition"
           title="Message"
         >
           <FaCommentDots size={32} />
         </button>
+        <button
+          className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-600 dark:text-white p-2 rounded-full transition"
+          title="Ghost"
+        >
+          <TbGhost2Filled size={32} />
+        </button>
+
 
         <button
           className="bg-pink-100 hover:bg-pink-200 dark:bg-pink-800 dark:hover:bg-pink-700 text-pink-600 dark:text-white p-2 rounded-full transition"
