@@ -1,6 +1,11 @@
-import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser } from "../../redux/userSlice";
+import { api } from "../../utils/api";
+import Logout from "../pages/Auth/Logout";
+import LiveProfileEditor from "./LiveProfileEditor";
+
 import {
   FaMapMarkerAlt,
   FaUser,
@@ -15,7 +20,6 @@ import {
 } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { MdVerified } from "react-icons/md";
-import { addUser } from "../../redux/userSlice";
 
 const InfoItem = ({ icon: Icon, label, value }) => (
   <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
@@ -40,6 +44,7 @@ const ProfileView = ({ profile }) => {
   useEffect(() => {
     if (profile) {
       dispatch(addUser(profile));
+      console.log("Loaded Profile:", profile); // ✅ Debug log
     }
   }, [profile, dispatch]);
 
@@ -100,7 +105,7 @@ const ProfileView = ({ profile }) => {
         <InfoItem
           icon={() => <>🤝</>}
           label="Match Type"
-          value={preferences?.matchType}
+          value={preferences && preferences.matchType}
         />
         <InfoItem
           icon={() => <>⭐</>}
@@ -110,12 +115,12 @@ const ProfileView = ({ profile }) => {
         <InfoItem
           icon={() => <>📍</>}
           label="Following"
-          value={Array.isArray(following) ? following.length : 0}
+          value={Array.isArray(following) ? following.length : following}
         />
         <InfoItem
           icon={() => <>📌</>}
           label="Followers"
-          value={Array.isArray(followers) ? followers.length : 0}
+          value={Array.isArray(followers) ? followers.length : followers}
         />
       </div>
 
@@ -146,7 +151,7 @@ const ProfileView = ({ profile }) => {
       </div>
 
       {/* Socials */}
-      {socialLinks && (
+      {socialLinks && Object.keys(socialLinks).length > 0 && (
         <div className="mt-6">
           <h3 className="font-semibold text-lg text-gray-800 dark:text-white mb-2">
             Connect with me
@@ -200,4 +205,65 @@ const ProfileView = ({ profile }) => {
   );
 };
 
-export default ProfileView;
+const ProfileContainer = () => {
+  const [profile, setProfile] = useState(null);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [editMode, setEditMode] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const userData = useSelector((store) => store.user);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await api.get("/profile/view");
+        console.log("Profile API Response:", res.data);
+        const { success, profile, message } = res.data;
+
+        if (success) {
+          dispatch(addUser(profile));
+          setProfile(profile);
+        } else {
+          setErrorMsg(message || "Profile not found");
+        }
+      } catch (error) {
+        setErrorMsg(error?.response?.data?.message || "Unexpected error");
+        navigate("/login");
+      }
+    };
+
+    if (!userData || !userData.emailID) {
+      fetchProfile();
+    } else {
+      setProfile(userData);
+    }
+  }, [dispatch, navigate, userData]);
+
+  return (
+    <div className="min-h-screen bg-gray-100 dark:bg-black p-4">
+      <div className="flex justify-between items-center mb-4">
+        <Logout />
+        {profile && (
+          <button
+            onClick={() => setEditMode(!editMode)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
+          >
+            {editMode ? "View Profile" : "Edit Profile"}
+          </button>
+        )}
+      </div>
+
+      {!profile?.userName ? (
+        <p className="text-center text-lg text-red-500">
+          {errorMsg || "Profile data is incomplete"}
+        </p>
+      ) : editMode ? (
+        <LiveProfileEditor profile={profile} />
+      ) : (
+        <ProfileView profile={profile} />
+      )}
+    </div>
+  );
+};
+
+export default ProfileContainer;

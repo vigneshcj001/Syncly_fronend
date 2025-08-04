@@ -4,11 +4,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { addUser } from "./redux/userSlice";
 import Login from "./Components/pages/Auth/Login";
 import Signup from "./Components/pages/Auth/Signup";
-import Body from "./Components/CORE/Body";
+import ProfileContainer from "./Components/CORE/ProfileContainer";
 import ProtectedRoute from "./Components/CORE/ProtectedRoute";
 import Feed from "./Components/Feed/Feed";
 import LiveProfileEditor from "./Components/CORE/LiveProfileEditor";
-
+import UserProfile from "./Components/Profile/Profile";
+import Logout from "./Components/pages/Auth/Logout";
 function App() {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -41,9 +42,9 @@ function App() {
         <Route
           path="/*"
           element={
-            <ProtectedRoute>
-              <Body />
-            </ProtectedRoute>
+            //<ProtectedRoute>
+            <UserProfile />
+            //</ProtectedRoute>
           }
         />
         <Route
@@ -55,6 +56,7 @@ function App() {
           }
         />
       </Routes>
+      {user && <Logout />}
     </BrowserRouter>
   );
 }

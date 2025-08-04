@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { addUser } from "../../redux/userSlice";
 import { api } from "../../utils/api";
 import ProfileView from "./ProfileView";
-import ProfileEdit from "./ProfileEdit";
+import LiveProfileEditor from "../CORE/LiveProfileEditor"
 
 const UserProfile = () => {
   const [profile, setProfile] = useState(null);
@@ -36,11 +36,11 @@ const UserProfile = () => {
   if (!profile) return <div className="text-center">Loading...</div>;
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    <div className="w-full px-4 md:px-8 lg:px-16 xl:px-24 py-8">
       {!editing ? (
         <ProfileView profile={profile} setEditing={setEditing} />
       ) : (
-        <ProfileEdit
+        <LiveProfileEditor
           profile={profile}
           setProfile={setProfile}
           setEditing={setEditing}

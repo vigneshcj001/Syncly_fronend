@@ -30,7 +30,7 @@ const FeedCard = ({ profile }) => {
       {/* Header */}
       <div className="flex flex-col items-center mb-4">
         <img
-          src={profile.avatar}
+          src={profile.avatar || null} // FIX: Pass null if avatar is an empty string
           alt={profile.userName}
           className="w-20 h-20 rounded-full object-cover border-2 border-indigo-500 mb-3"
         />
@@ -160,8 +160,6 @@ const FeedCard = ({ profile }) => {
 
       {/* Footer Actions */}
       <div className="flex justify-center gap-4 mt-2">
-        
-
         <button
           className="bg-blue-100 hover:bg-blue-200 dark:bg-blue-800 dark:hover:bg-blue-700 text-blue-600 dark:text-white p-2 rounded-full transition"
           title="Message"
@@ -174,8 +172,6 @@ const FeedCard = ({ profile }) => {
         >
           <TbGhost2Filled size={32} />
         </button>
-
-
         <button
           className="bg-pink-100 hover:bg-pink-200 dark:bg-pink-800 dark:hover:bg-pink-700 text-pink-600 dark:text-white p-2 rounded-full transition"
           title="Vibe"
