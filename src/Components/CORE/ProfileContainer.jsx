@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../../redux/userSlice";
 import { api } from "../../utils/api";
 import Logout from "../pages/Auth/Logout";
-import LiveProfileEditor from "./LiveProfileEditor";
+import LiveProfileEditor from "../Profile/LiveProfileEditor";
 
 import {
   FaMapMarkerAlt,

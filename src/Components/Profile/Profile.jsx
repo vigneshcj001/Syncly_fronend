@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { addUser } from "../../redux/userSlice";
 import { api } from "../../utils/api";
 import ProfileView from "./ProfileView";
-import LiveProfileEditor from "../CORE/LiveProfileEditor"
+import LiveProfileEditor from "./LiveProfileEditor"
 
 const UserProfile = () => {
   const [profile, setProfile] = useState(null);

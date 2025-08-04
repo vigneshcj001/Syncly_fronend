@@ -4,10 +4,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { addUser } from "./redux/userSlice";
 import Login from "./Components/pages/Auth/Login";
 import Signup from "./Components/pages/Auth/Signup";
-import ProfileContainer from "./Components/CORE/ProfileContainer";
 import ProtectedRoute from "./Components/CORE/ProtectedRoute";
 import Feed from "./Components/Feed/Feed";
-import LiveProfileEditor from "./Components/CORE/LiveProfileEditor";
 import UserProfile from "./Components/Profile/Profile";
 import Logout from "./Components/pages/Auth/Logout";
 function App() {
