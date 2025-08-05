@@ -79,6 +79,7 @@ const ProfileView = ({ profile, setEditing }) => {
 
   return (
     <div className="max-w-lg w-full mx-auto p-6 bg-gray-900 shadow-xl rounded-2xl relative flex flex-col text-gray-200">
+      {/* Avatar */}
       <div className="pt-16 px-6">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <img
@@ -88,6 +89,7 @@ const ProfileView = ({ profile, setEditing }) => {
           />
         </div>
 
+        {/* Edit Button */}
         <button
           onClick={() => setEditing(true)}
           className="absolute top-4 right-4 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition flex gap-2 items-center text-sm"
@@ -95,11 +97,13 @@ const ProfileView = ({ profile, setEditing }) => {
           <FaEdit /> Edit
         </button>
 
+        {/* Basic Info */}
         <div className="text-center mt-2">
           <h2 className="text-2xl font-bold text-white">{userName}</h2>
           <p className="text-gray-400">{emailID}</p>
         </div>
 
+        {/* Profile Completion */}
         <div className="w-20 h-20 my-6 mx-auto">
           <CircularProgressbar
             value={completionPercent}
@@ -112,6 +116,7 @@ const ProfileView = ({ profile, setEditing }) => {
           />
         </div>
 
+        {/* Bio */}
         <div className="mb-6 text-gray-300">
           <p className="flex items-center gap-3">
             <FaBriefcase className="text-gray-500" />
@@ -119,6 +124,7 @@ const ProfileView = ({ profile, setEditing }) => {
           </p>
         </div>
 
+        {/* Details */}
         <div className="grid grid-cols-2 gap-4 text-gray-300 mb-4 text-sm">
           <p className="flex items-center gap-2">
             <FaProjectDiagram className="text-gray-500" />
@@ -144,8 +150,19 @@ const ProfileView = ({ profile, setEditing }) => {
             <FaLaptopCode className="text-gray-500" />
             <strong>Account:</strong> {accountType || "N/A"}
           </p>
+          <p className="flex items-center gap-2">
+            <FaGlobe className="text-gray-500" />
+            <strong>Created:</strong>{" "}
+            {createdAt ? dayjs(createdAt).format("DD MMM YYYY") : "N/A"}
+          </p>
+          <p className="flex items-center gap-2">
+            <FaGlobe className="text-gray-500" />
+            <strong>Updated:</strong>{" "}
+            {updatedAt ? dayjs(updatedAt).format("DD MMM YYYY") : "N/A"}
+          </p>
         </div>
 
+        {/* Skills & Stack */}
         <Section title="Skills" icon={<FaStar />} items={skills} color="blue" />
         <Section
           title="Tech Stack"
@@ -154,11 +171,19 @@ const ProfileView = ({ profile, setEditing }) => {
           color="purple"
         />
 
+        {/* Social Links */}
         <div className="mt-6">
           <h3 className="text-lg font-semibold flex items-center gap-2 text-white">
             <FaGlobe /> Social Links
           </h3>
           <div className="flex flex-wrap gap-4 mt-2">
+            {socialLinks.portfolio && (
+              <SocialLink
+                url={socialLinks.portfolio}
+                label="Portfolio"
+                icon={<FaGlobe />}
+              />
+            )}
             {socialLinks.github && (
               <SocialLink
                 url={socialLinks.github}
@@ -173,9 +198,20 @@ const ProfileView = ({ profile, setEditing }) => {
                 icon={<FaLinkedin />}
               />
             )}
+            {socialLinks.youtube && (
+              <SocialLink
+                url={socialLinks.youtube}
+                label="YouTube"
+                icon={<FaYoutube />}
+              />
+            )}
+            {socialLinks.X && (
+              <SocialLink url={socialLinks.X} label="X" icon={<SiX />} />
+            )}
           </div>
         </div>
 
+        {/* Followers */}
         <div className="mt-6 flex gap-6 items-center text-sm text-gray-400">
           <span>
             <strong>{followers.length}</strong> Followers

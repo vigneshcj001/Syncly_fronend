@@ -60,7 +60,11 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="w-full h-full flex flex-col items-center px-4 md:px-8 py-8">
+    <div
+      className={`w-full h-full flex flex-col items-center px-4 md:px-8 py-20 ${
+        !editing ? "mb-20" : ""
+      }`}
+    >
       {!editing ? (
         <ProfileView profile={profile} setEditing={setEditing} />
       ) : (

@@ -16,6 +16,9 @@ import ProtectedRoute from "./Components/CORE/ProtectedRoute";
 import Feed from "./Components/Feed/Feed";
 import UserProfile from "./Components/Profile/Profile";
 import ProfileEditor from "./Components/Profile/ProfileEditor";
+import YourVibes from "./Components/Vibes_AND_Mutual/YourVibes";
+import MutualLinks from "./Components/Vibes_AND_Mutual/MutualLinks";
+import Chatroom from "./Components/Chatroom/Chatroom";
 
 // Layout for Protected Routes
 function MainLayout({ children }) {
@@ -71,6 +74,36 @@ function App() {
             <ProtectedRoute>
               <MainLayout>
                 <Feed />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/vibes"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <YourVibes />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/mutualLinks"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <MutualLinks />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chatroom"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <Chatroom/>
               </MainLayout>
             </ProtectedRoute>
           }

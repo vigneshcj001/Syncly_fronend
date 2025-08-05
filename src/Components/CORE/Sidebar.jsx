@@ -1,30 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Home,
   User,
-  Settings,
   LogOut,
   MessageCircleHeart,
   ClipboardList,
   ChevronLeft,
   ChevronRight,
+  Link as LinkIcon,
 } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { removeUser } from "../../redux/userSlice";
-import SideBar_logo from "../../../public/SideBar_logo.png"
+import { Link, useLocation } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import SideBar_logo from "./SideBar_logo.png";
 import Logout from "../pages/Auth/Logout";
+import { addUser } from "../../redux/userSlice";
 
 export const Sidebar = () => {
   const [open, setOpen] = useState(true);
   const location = useLocation();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+
+  // ✅ Load user from localStorage if not already in Redux
+  useEffect(() => {
+    if (!user || !user.userName) {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        try {
+          dispatch(addUser(JSON.parse(storedUser)));
+        } catch (e) {
+          console.error("Failed to parse user from localStorage", e);
+        }
+      }
+    }
+  }, [dispatch, user]);
 
   const navItems = [
     { name: "Feed", path: "/", icon: Home },
     { name: "Your Vibes", path: "/vibes", icon: MessageCircleHeart },
+    { name: "Mutual Links", path: "/mutualLinks", icon: LinkIcon },
     { name: "Chatroom", path: "/chatroom", icon: ClipboardList },
     { name: "Profile", path: "/profile", icon: User },
   ];
@@ -50,7 +64,6 @@ export const Sidebar = () => {
               alt="Syncly Logo"
               className="w-8 h-8 object-contain"
             />
-
             {open && <span className="font-bold text-lg">Syncly</span>}
           </div>
           <button
@@ -61,7 +74,7 @@ export const Sidebar = () => {
           </button>
         </div>
 
-        {/* Navigation */}
+        {/* Navigation Links */}
         <nav className="mt-4 flex flex-col gap-1">
           {navItems.map(({ name, path, icon: Icon }) => (
             <Link
@@ -77,25 +90,28 @@ export const Sidebar = () => {
           ))}
         </nav>
       </div>
-      {/* Bottom Section - User Info and Logout */}
 
+      {/* Bottom Section - Avatar + UserName + Logout */}
       <div className="border-t border-gray-700 p-4 flex items-center gap-3">
         <Link
           to="/profile"
           className="flex items-center gap-3 hover:opacity-80 transition"
         >
-          {console.log("Avatar:", user?.avatar)}
           <img
             src={
-              user?.avatar && typeof user.avatar === "string"
+              user?.avatar && user.avatar.startsWith("http")
                 ? user.avatar
-                : "https://ui-avatars.com/api/?name=User&background=random"
+                : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                    user?.userName || "User"
+                  )}&background=random`
             }
             alt="User Avatar"
-            className="w-10 h-10 rounded-full"
+            className="w-10 h-10 rounded-full object-cover"
           />
           {open && (
-            <p className="text-sm font-medium">{user?.userName || "User"}</p>
+            <p className="text-sm font-medium truncate max-w-[120px]">
+              {user?.userName || "User"}
+            </p>
           )}
         </Link>
 
@@ -108,3 +124,5 @@ export const Sidebar = () => {
     </div>
   );
 };
+
+export default Sidebar;
