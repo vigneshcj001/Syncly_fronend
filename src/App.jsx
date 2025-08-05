@@ -9,7 +9,7 @@ import Signup from "./Components/pages/Auth/Signup";
 import Logout from "./Components/pages/Auth/Logout";
 
 // Core Components
-import { Sidebar } from "./Components/CORE/Sidebar";
+import Sidebar  from "./Components/CORE/Sidebar";
 import ProtectedRoute from "./Components/CORE/ProtectedRoute";
 
 // Main Feature Pages
