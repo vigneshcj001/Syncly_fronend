@@ -2,12 +2,33 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { addUser } from "./redux/userSlice";
+
+// Auth Pages
 import Login from "./Components/pages/Auth/Login";
 import Signup from "./Components/pages/Auth/Signup";
+import Logout from "./Components/pages/Auth/Logout";
+
+// Core Components
+import { Sidebar } from "./Components/CORE/Sidebar";
 import ProtectedRoute from "./Components/CORE/ProtectedRoute";
+
+// Main Feature Pages
 import Feed from "./Components/Feed/Feed";
 import UserProfile from "./Components/Profile/Profile";
-import Logout from "./Components/pages/Auth/Logout";
+import ProfileEditor from "./Components/Profile/ProfileEditor";
+
+// Layout for Protected Routes
+function MainLayout({ children }) {
+  return (
+    <div className="flex h-screen">
+      <Sidebar />
+      <div className="flex-1 flex flex-col">
+        <div className="flex-1 overflow-y-auto p-4 h-full">{children}</div>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -32,29 +53,49 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+        {/* Auth Routes */}
         <Route
-          path="/signup"
-          element={user ? <Navigate to="/" /> : <Signup />}
+          path="/login"
+          element={!user ? <Login /> : <Navigate to="/" />}
         />
         <Route
-          path="/*"
+          path="/signup"
+          element={!user ? <Signup /> : <Navigate to="/" />}
+        />
+        <Route path="/logout" element={<Logout />} />
+
+        {/* Protected Routes */}
+        <Route
+          path="/"
           element={
-            //<ProtectedRoute>
-            <UserProfile />
-            //</ProtectedRoute>
+            <ProtectedRoute>
+              <MainLayout>
+                <Feed />
+              </MainLayout>
+            </ProtectedRoute>
           }
         />
         <Route
-          path="/feed"
+          path="/profile"
           element={
             <ProtectedRoute>
-              <Feed />
+              <MainLayout>
+                <UserProfile />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profileEdit"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <ProfileEditor />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
       </Routes>
-      {user && <Logout />}
     </BrowserRouter>
   );
 }

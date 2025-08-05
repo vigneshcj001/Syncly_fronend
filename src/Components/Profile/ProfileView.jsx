@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   FaUser,
   FaEnvelope,
@@ -22,8 +22,22 @@ import dayjs from "dayjs";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
+const colorMap = {
+  blue: {
+    heading: "text-blue-400",
+    tag: "bg-blue-300 text-blue-900 hover:bg-blue-400",
+  },
+  purple: {
+    heading: "text-purple-400",
+    tag: "bg-purple-300 text-purple-900 hover:bg-purple-400",
+  },
+  pink: {
+    heading: "text-pink-400",
+    tag: "bg-pink-300 text-pink-900 hover:bg-pink-400",
+  },
+};
+
 const ProfileView = ({ profile, setEditing }) => {
-  
   const {
     userName,
     emailID,
@@ -56,96 +70,78 @@ const ProfileView = ({ profile, setEditing }) => {
     stack.length,
     skills.length,
     interests.length,
-    location !== "Unknown",
-    socialLinks.github || socialLinks.linkedin || socialLinks.portfolio,
+    location,
+    socialLinks.github || socialLinks.linkedin,
     domain,
   ].filter(Boolean).length;
 
   const completionPercent = Math.round((completedFields / totalFields) * 100);
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-900 shadow-xl rounded-2xl relative">
-      <div className="relative bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 h-40 rounded-t-2xl">
-        <div className="absolute top-20 left-6">
+    <div className="max-w-lg w-full mx-auto p-6 bg-gray-900 shadow-xl rounded-2xl relative flex flex-col text-gray-200">
+      <div className="pt-16 px-6">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <img
-            src={avatar}
+            src={avatar || "https://i.pravatar.cc/150"}
             alt="Avatar"
-            className="w-28 h-28 rounded-full border-4 border-white shadow-lg object-cover"
+            className="w-28 h-28 rounded-full border-4 border-gray-900 shadow-lg object-cover"
           />
         </div>
-      </div>
 
-      <div className="pt-20 px-6">
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-              <FaUser className="text-blue-500" />
-              {userName}{" "}
-              {isVerified && <MdVerified className="text-blue-500" />}
+        <button
+          onClick={() => setEditing(true)}
+          className="absolute top-4 right-4 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition flex gap-2 items-center text-sm"
+        >
+          <FaEdit /> Edit
+        </button>
 
-            </h2>
-            <p className="text-gray-500 dark:text-gray-300 flex items-center gap-2">
-              <FaEnvelope /> {emailID}
-            </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
-              <FaMapMarkerAlt className="text-red-500" />{" "}
-              {location || "Unknown"}
-            </p>
-          </div>
-
-          <div>
-            <button
-              onClick={() => setEditing(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-full hover:scale-105 transition flex gap-2 items-center"
-            >
-              <FaEdit /> Edit
-            </button>
-          </div>
+        <div className="text-center mt-2">
+          <h2 className="text-2xl font-bold text-white">{userName}</h2>
+          <p className="text-gray-400">{emailID}</p>
         </div>
 
-        <div className="w-24 h-24 mb-6">
+        <div className="w-20 h-20 my-6 mx-auto">
           <CircularProgressbar
             value={completionPercent}
             text={`${completionPercent}%`}
             styles={buildStyles({
               pathColor: "#10B981",
               textColor: "#10B981",
-              trailColor: "#D1D5DB",
+              trailColor: "#374151",
             })}
           />
         </div>
 
-        {/* Bio Section - Full Width */}
-        <div className="mb-6 text-gray-700 dark:text-gray-200">
-          <p>
-            <FaBriefcase className="inline mr-2" />
-            <strong>Bio:</strong> {bio || "N/A"}
+        <div className="mb-6 text-gray-300">
+          <p className="flex items-center gap-3">
+            <FaBriefcase className="text-gray-500" />
+            <strong>Bio:</strong> {bio || "Not specified."}
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-4 text-gray-700 dark:text-gray-200 mb-4">
-          <p>
-            <FaProjectDiagram className="inline mr-2" />
+        <div className="grid grid-cols-2 gap-4 text-gray-300 mb-4 text-sm">
+          <p className="flex items-center gap-2">
+            <FaProjectDiagram className="text-gray-500" />
             <strong>Domain:</strong> {domain || "N/A"}
           </p>
-          <p>
-            <FaTools className="inline mr-2" />
+          <p className="flex items-center gap-2">
+            <FaTools className="text-gray-500" />
             <strong>Role:</strong> {role || "N/A"}
           </p>
-          <p>
-            <FaUserFriends className="inline mr-2" />
+          <p className="flex items-center gap-2">
+            <FaUserFriends className="text-gray-500" />
             <strong>Mentorship:</strong> {mentorshipRole || "N/A"}
           </p>
-          <p>
-            <MdOutlineScore className="inline mr-2" />
+          <p className="flex items-center gap-2">
+            <MdOutlineScore className="text-gray-500" />
             <strong>Reputation:</strong> {reputationScore || 0}
           </p>
-          <p>
-            <FaStar className="inline mr-2" />
+          <p className="flex items-center gap-2">
+            <FaStar className="text-gray-500" />
             <strong>Status:</strong> {status || "N/A"}
           </p>
-          <p>
-            <FaLaptopCode className="inline mr-2" />
+          <p className="flex items-center gap-2">
+            <FaLaptopCode className="text-gray-500" />
             <strong>Account:</strong> {accountType || "N/A"}
           </p>
         </div>
@@ -157,25 +153,12 @@ const ProfileView = ({ profile, setEditing }) => {
           items={stack}
           color="purple"
         />
-        <Section
-          title="Interests"
-          icon={<FaLightbulb />}
-          items={interests}
-          color="pink"
-        />
 
         <div className="mt-6">
-          <h3 className="text-lg font-semibold flex items-center gap-2 text-gray-700 dark:text-white">
+          <h3 className="text-lg font-semibold flex items-center gap-2 text-white">
             <FaGlobe /> Social Links
           </h3>
-          <div className="flex flex-wrap gap-3 mt-2">
-            {socialLinks.portfolio && (
-              <SocialLink
-                url={socialLinks.portfolio}
-                label="Portfolio"
-                icon={<FaGlobe />}
-              />
-            )}
+          <div className="flex flex-wrap gap-4 mt-2">
             {socialLinks.github && (
               <SocialLink
                 url={socialLinks.github}
@@ -190,20 +173,10 @@ const ProfileView = ({ profile, setEditing }) => {
                 icon={<FaLinkedin />}
               />
             )}
-            {socialLinks.X && (
-              <SocialLink url={socialLinks.X} label="X" icon={<SiX />} />
-            )}
-            {socialLinks.youtube && (
-              <SocialLink
-                url={socialLinks.youtube}
-                label="YouTube"
-                icon={<FaYoutube />}
-              />
-            )}
           </div>
         </div>
 
-        <div className="mt-6 flex gap-6 items-center text-sm text-gray-600 dark:text-gray-300">
+        <div className="mt-6 flex gap-6 items-center text-sm text-gray-400">
           <span>
             <strong>{followers.length}</strong> Followers
           </span>
@@ -211,30 +184,26 @@ const ProfileView = ({ profile, setEditing }) => {
             <strong>{following.length}</strong> Following
           </span>
         </div>
-
-        <div className="mt-4 text-xs text-gray-400 text-right">
-          <p>Created: {dayjs(createdAt).format("DD MMM YYYY, h:mm A")}</p>
-          <p>Updated: {dayjs(updatedAt).format("DD MMM YYYY, h:mm A")}</p>
-        </div>
       </div>
     </div>
   );
 };
 
 const Section = ({ title, icon, items = [], color }) => {
-  if (!items.length) return null;
+  if (!items || items.length === 0) return null;
+  const styles = colorMap[color] || colorMap.blue;
   return (
-    <div className="mt-4">
+    <div className="mt-6">
       <h3
-        className={`text-lg font-semibold flex items-center gap-2 text-${color}-700 dark:text-${color}-300`}
+        className={`text-lg font-semibold flex items-center gap-2 mb-2 ${styles.heading}`}
       >
         {icon} {title}
       </h3>
-      <div className="flex flex-wrap gap-2 mt-2">
+      <div className="flex flex-wrap gap-2">
         {items.map((item, i) => (
           <span
             key={i}
-            className={`px-3 py-1 bg-${color}-100 text-${color}-800 rounded-full text-sm transition-all transform hover:scale-105 hover:bg-${color}-200`}
+            className={`px-3 py-1 rounded-full text-sm font-semibold transition-transform transform hover:scale-105 ${styles.tag}`}
           >
             {item}
           </span>
@@ -249,7 +218,7 @@ const SocialLink = ({ url, label, icon }) => (
     href={url}
     target="_blank"
     rel="noopener noreferrer"
-    className="text-blue-500 hover:underline flex items-center gap-1"
+    className="text-blue-400 hover:text-blue-300 hover:underline flex items-center gap-1 transition-colors"
   >
     {icon} {label}
   </a>
