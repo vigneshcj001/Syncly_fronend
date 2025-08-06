@@ -40,7 +40,7 @@ const YourVibes = () => {
   const reviewVibes = async (connectionStatus, requestId) => {
     try {
       setProcessingId(requestId);
-      const res = await api.post(
+      const res = await api.put(
         `/request/review/${connectionStatus}/${requestId}`
       );
       console.log("✅ Review success:", res.data);

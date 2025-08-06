@@ -24,6 +24,7 @@ const YourVibes = () => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [processingId, setProcessingId] = useState(null);
 
+  // Fetch pending vibes
   const fetchVibes = async () => {
     try {
       setLoading(true);
@@ -37,14 +38,13 @@ const YourVibes = () => {
     }
   };
 
-  const reviewVibes = async (connectionStatus, requestId) => {
+  // Review vibe request
+  const reviewVibes = async (status, requestId) => {
     try {
       setProcessingId(requestId);
-      const res = await api.post(
-        `/request/review/${connectionStatus}/${requestId}`
-      );
+      const res = await api.put(`/request/review/${status}/${requestId}`);
       console.log("✅ Review success:", res.data);
-      fetchVibes();
+      fetchVibes(); // Refresh after action
     } catch (error) {
       console.error("❌ Review error:", {
         message: error.message,
@@ -256,7 +256,7 @@ const YourVibes = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-2 ml-4">
+                <div className="flex flex-col gap-2 ml-4">
                   <button
                     disabled={processingId === requestId}
                     onClick={() => reviewVibes("Link", requestId)}

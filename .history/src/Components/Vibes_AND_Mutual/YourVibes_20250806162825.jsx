@@ -24,40 +24,29 @@ const YourVibes = () => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [processingId, setProcessingId] = useState(null);
 
+  // Fetch pending vibes
   const fetchVibes = async () => {
     try {
       setLoading(true);
       const res = await api.get("/network/requests/pendings");
       dispatch(setVibes(res.data.data || []));
     } catch (err) {
-      console.error("❌ Fetch error:", err);
+      console.error(err);
       setError("Failed to load pending vibes.");
     } finally {
       setLoading(false);
     }
   };
 
-  const reviewVibes = async (connectionStatus, requestId) => {
+  // Review vibe request
+  const reviewVibes = async (status, requestId) => {
     try {
       setProcessingId(requestId);
-      const res = await api.post(
-        `/request/review/${connectionStatus}/${requestId}`
-      );
-      console.log("✅ Review success:", res.data);
-      fetchVibes();
+      await api.put(`/request/review/${status}/${requestId}`);
+      fetchVibes(); // Refresh after action
     } catch (error) {
-      console.error("❌ Review error:", {
-        message: error.message,
-        status: error.response?.status,
-        data: error.response?.data,
-      });
-
-      setError(
-        error.response?.data?.message ||
-          `Failed to review the vibe. Status: ${
-            error.response?.status || "unknown"
-          }`
-      );
+      console.error(error);
+      setError("Failed to review the vibe.");
     } finally {
       setProcessingId(null);
     }
@@ -67,6 +56,7 @@ const YourVibes = () => {
     fetchVibes();
   }, []);
 
+  // Filtering + sorting logic
   const filteredVibes = (Array.isArray(vibes) ? vibes : [])
     .filter((item) => {
       const user = item?.initiatorID;
@@ -134,7 +124,6 @@ const YourVibes = () => {
         </div>
       </div>
 
-      {/* Error message */}
       {error && <p className="text-red-500">{error}</p>}
 
       {/* Content */}
@@ -256,7 +245,7 @@ const YourVibes = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-2 ml-4">
+                <div className="flex flex-col gap-2 ml-4">
                   <button
                     disabled={processingId === requestId}
                     onClick={() => reviewVibes("Link", requestId)}
