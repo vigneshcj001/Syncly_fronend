@@ -9,10 +9,10 @@ import {
   FaGithub,
   FaGlobe,
   FaYoutube,
+  FaXTwitter,
   FaSearch,
-} from "react-icons/fa";
+} from "react-icons/fa6";
 
-import { FaXTwitter } from "react-icons/fa6";
 const MutualLinks = () => {
   const dispatch = useDispatch();
   const mutualLinks = useSelector((state) => state.mutual);

@@ -48,7 +48,7 @@ const Sidebar = () => {
 
   const navItems = [
     { name: "Feed", path: "/", icon: Home },
-    { name: "Your Vibes", path: "/vibes", icon: MessageCircleHeart },
+    { name: "Your pending Vibes", path: "/vibes", icon: MessageCircleHeart },
     { name: "Mutual Links", path: "/mutualLinks", icon: LinkIcon },
     { name: "Chatroom", path: "/chatroom", icon: ClipboardList },
     { name: "Profile", path: "/profile", icon: User },
