@@ -16,7 +16,7 @@ import { FaXTwitter } from "react-icons/fa6";
 const MutualLinks = () => {
   const dispatch = useDispatch();
   const mutualLinks = useSelector((state) => state.mutual);
-  const loggedInUserId = useSelector((state) => state.user?._id);
+  const loggedInUserId = useSelector((state) => state.auth.user._id);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,15 +28,15 @@ const MutualLinks = () => {
     try {
       setLoading(true);
       const res = await api.get("/network/mutualVibes");
+      const rawLinks = res.data.data;
 
-      const transformedData = res.data.data.map((item) => {
-        const isInitiator = item.initiatorID.user === loggedInUserId;
-        return isInitiator ? item.recipientID : item.initiatorID;
+      const cleanLinks = rawLinks.map((link) => {
+        const { initiatorID, recipientID } = link;
+        return initiatorID.user === loggedInUserId ? recipientID : initiatorID;
       });
 
-      dispatch(setMutualLinks(transformedData));
+      dispatch(setMutualLinks(cleanLinks));
     } catch (err) {
-      console.error(err);
       setError("Failed to load data");
     } finally {
       setLoading(false);
@@ -44,10 +44,8 @@ const MutualLinks = () => {
   };
 
   useEffect(() => {
-    if (loggedInUserId) {
-      fetchMutualLinks();
-    }
-  }, [loggedInUserId]);
+    fetchMutualLinks();
+  }, []);
 
   const filteredLinks = (mutualLinks || [])
     .filter((user) => {

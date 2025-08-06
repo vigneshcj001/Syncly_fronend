@@ -15,6 +15,8 @@ import YourVibesSkeleton from "./YourVibesSkeleton";
 
 const YourVibes = () => {
   const dispatch = useDispatch();
+
+  // Make sure vibes is always an array
   const vibes = useSelector((state) => state.vibes || []);
 
   const [loading, setLoading] = useState(true);
@@ -52,23 +54,18 @@ const YourVibes = () => {
   }, []);
 
   const filteredVibes = (Array.isArray(vibes) ? vibes : [])
-    .filter((item) => {
-      const user = item.initiatorID;
-      if (!user) return false;
+    .filter((user) => {
       if (filterRole === "all") return true;
       return user.mentorshipRole === filterRole;
     })
-    .filter((item) => {
-      const user = item.initiatorID;
-      return user?.userName?.toLowerCase().includes(searchQuery.toLowerCase());
-    })
-    .sort((a, b) => {
-      const nameA = a.initiatorID?.userName?.toLowerCase() || "";
-      const nameB = b.initiatorID?.userName?.toLowerCase() || "";
-      return sortOrder === "asc"
-        ? nameA.localeCompare(nameB)
-        : nameB.localeCompare(nameA);
-    });
+    .filter((user) =>
+      user.userName?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) =>
+      sortOrder === "asc"
+        ? a.userName.localeCompare(b.userName)
+        : b.userName.localeCompare(a.userName)
+    );
 
   return (
     <div className="p-4 space-y-4">
@@ -121,9 +118,8 @@ const YourVibes = () => {
         <p className="text-gray-400">No pending vibes found.</p>
       ) : (
         <div className="space-y-4">
-          {filteredVibes.map((item) => {
-            const requestId = item._id;
-            const user = item.initiatorID;
+          {filteredVibes.map((user) => {
+            const requestId = user._id;
 
             return (
               <motion.div

@@ -16,7 +16,7 @@ import { FaXTwitter } from "react-icons/fa6";
 const MutualLinks = () => {
   const dispatch = useDispatch();
   const mutualLinks = useSelector((state) => state.mutual);
-  const loggedInUserId = useSelector((state) => state.user?._id);
+  const loggedInUserId = useSelector((state) => state.auth.user?._id);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,7 +36,6 @@ const MutualLinks = () => {
 
       dispatch(setMutualLinks(transformedData));
     } catch (err) {
-      console.error(err);
       setError("Failed to load data");
     } finally {
       setLoading(false);
@@ -153,7 +152,9 @@ const MutualLinks = () => {
                   </p>
                   <p>
                     Interests:{" "}
-                    {user.interests.length ? user.interests.join(", ") : "None"}
+                    {user.interests.length
+                      ? user.interests.join(", ")
+                      : "None"}
                   </p>
                 </div>
               </div>

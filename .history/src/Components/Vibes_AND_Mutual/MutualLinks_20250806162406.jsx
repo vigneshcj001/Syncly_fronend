@@ -9,13 +9,14 @@ import {
   FaGithub,
   FaGlobe,
   FaYoutube,
-  FaXTwitter,
   FaSearch,
-} from "react-icons/fa6";
+} from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
 const MutualLinks = () => {
   const dispatch = useDispatch();
   const mutualLinks = useSelector((state) => state.mutual);
+  const loggedInUserId = useSelector((state) => state.user?._id);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,8 +28,15 @@ const MutualLinks = () => {
     try {
       setLoading(true);
       const res = await api.get("/network/mutualVibes");
-      dispatch(setMutualLinks(res.data.data));
+
+      const transformedData = res.data.data.map((item) => {
+        const isInitiator = item.initiatorID.user === loggedInUserId;
+        return isInitiator ? item.recipientID : item.initiatorID;
+      });
+
+      dispatch(setMutualLinks(transformedData));
     } catch (err) {
+      console.error(err);
       setError("Failed to load data");
     } finally {
       setLoading(false);
@@ -36,8 +44,10 @@ const MutualLinks = () => {
   };
 
   useEffect(() => {
-    fetchMutualLinks();
-  }, []);
+    if (loggedInUserId) {
+      fetchMutualLinks();
+    }
+  }, [loggedInUserId]);
 
   const filteredLinks = (mutualLinks || [])
     .filter((user) => {

@@ -2,56 +2,72 @@ import React from "react";
 
 const ProfileSkeleton = () => {
   return (
-    <div className="max-w-lg w-full mx-auto p-6 bg-gray-900 shadow-xl rounded-2xl relative flex flex-col text-gray-200">
-      <div className="pt-16 px-6 animate-pulse">
-        {/* Avatar Skeleton */}
+    <div className="mt-10 max-w-lg w-full mx-auto p-6 bg-gray-900 shadow-xl rounded-2xl relative flex flex-col text-gray-200 animate-pulse">
+      {/* Avatar */}
+      <div className="pt-16 px-6">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          <div className="w-28 h-28 rounded-full bg-gray-700"></div>
+          <div className="w-28 h-28 rounded-full border-4 border-gray-900 bg-gray-700" />
         </div>
 
-        {/* Name and Email Skeleton */}
+        {/* Edit Button Placeholder */}
+        <div className="absolute top-4 right-4 h-8 w-20 bg-gray-700 rounded-full" />
+
+        {/* Name & Email */}
         <div className="text-center mt-2">
-          <div className="h-7 bg-gray-700 rounded w-1/2 mx-auto mb-2"></div>
-          <div className="h-4 bg-gray-700 rounded w-2/3 mx-auto"></div>
+          <div className="h-6 w-32 bg-gray-700 mx-auto rounded mb-2" />
+          <div className="h-4 w-40 bg-gray-700 mx-auto rounded" />
         </div>
 
-        {/* Progress Bar Skeleton */}
-        <div className="w-20 h-20 my-6 mx-auto rounded-full bg-gray-700"></div>
+        {/* Profile Completion Circle Placeholder */}
+        <div className="w-20 h-20 my-6 mx-auto bg-gray-700 rounded-full" />
 
-        {/* Bio Skeleton */}
-        <div className="mb-6">
-          <div className="h-5 bg-gray-700 rounded w-full"></div>
+        {/* Bio */}
+        <div className="mb-6 text-gray-300 space-y-2">
+          <div className="h-4 w-3/4 bg-gray-700 rounded" />
         </div>
 
-        {/* Details Grid Skeleton */}
+        {/* Grid Info */}
         <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-          <div className="h-4 bg-gray-700 rounded w-full"></div>
-          <div className="h-4 bg-gray-700 rounded w-full"></div>
-          <div className="h-4 bg-gray-700 rounded w-full"></div>
-          <div className="h-4 bg-gray-700 rounded w-full"></div>
-          <div className="h-4 bg-gray-700 rounded w-full"></div>
-          <div className="h-4 bg-gray-700 rounded w-full"></div>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="h-4 w-5/6 bg-gray-700 rounded" />
+          ))}
         </div>
 
-        {/* Sections Skeleton */}
+        {/* Skills */}
+        <SectionSkeleton title="Skills" />
+
+        {/* Tech Stack */}
+        <SectionSkeleton title="Tech Stack" />
+
+        {/* Social Links */}
         <div className="mt-6">
-          <div className="h-5 bg-gray-700 rounded w-1/4 mb-3"></div>
-          <div className="flex flex-wrap gap-2">
-            <div className="h-7 bg-gray-700 rounded-full w-20"></div>
-            <div className="h-7 bg-gray-700 rounded-full w-24"></div>
-            <div className="h-7 bg-gray-700 rounded-full w-28"></div>
+          <div className="h-5 w-32 bg-gray-700 rounded mb-2" />
+          <div className="flex flex-wrap gap-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="h-4 w-24 bg-gray-700 rounded" />
+            ))}
           </div>
         </div>
 
-        <div className="mt-6">
-          <div className="h-5 bg-gray-700 rounded w-1/3 mb-3"></div>
-          <div className="flex flex-wrap gap-2">
-            <div className="h-7 bg-gray-700 rounded-full w-24"></div>
-          </div>
+        {/* Followers */}
+        <div className="mt-6 flex gap-6 items-center text-sm">
+          <div className="h-4 w-24 bg-gray-700 rounded" />
+          <div className="h-4 w-24 bg-gray-700 rounded" />
         </div>
       </div>
     </div>
   );
 };
+
+const SectionSkeleton = ({ title }) => (
+  <div className="mt-6">
+    <div className="h-5 w-32 bg-gray-700 rounded mb-2" />
+    <div className="flex flex-wrap gap-2">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div key={i} className="h-6 w-16 bg-gray-700 rounded-full" />
+      ))}
+    </div>
+  </div>
+);
 
 export default ProfileSkeleton;
