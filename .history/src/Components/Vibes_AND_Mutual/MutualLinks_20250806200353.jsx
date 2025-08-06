@@ -149,7 +149,9 @@ const MutualLinks = () => {
                   </p>
                   <p>
                     Interests:{" "}
-                    {user.interests.length ? user.interests.join(", ") : "None"}
+                    {user.interests.length
+                      ? user.interests.join(", ")
+                      : "None"}
                   </p>
                 </div>
               </div>
