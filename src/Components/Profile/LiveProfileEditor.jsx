@@ -4,6 +4,7 @@ import { api } from "../../utils/api";
 import { addUser } from "../../redux/userSlice";
 import FeedCard from "../Feed/FeedCard";
 import { toast } from "react-hot-toast";
+import { memo } from "react";
 import {
   FaSave,
   FaUserEdit,
@@ -446,4 +447,4 @@ const LiveProfileEditor = ({ profile, setProfile, setEditing }) => {
   );
 };
 
-export default LiveProfileEditor;
+export default memo(LiveProfileEditor);

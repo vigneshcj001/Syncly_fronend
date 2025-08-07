@@ -1,21 +1,24 @@
 import React, { useState } from "react";
 import {
-  FaMapMarkerAlt,
-  FaEnvelope,
   FaGithub,
   FaLinkedin,
   FaGlobe,
   FaYoutube,
   FaCommentDots,
-  FaUserFriends,
   FaInstagram,
   FaFacebookF,
 } from "react-icons/fa";
-import { FaUser, FaStar, FaCodeBranch, FaXTwitter } from "react-icons/fa6";
+import { FaXTwitter } from "react-icons/fa6";
 import { TbHeartFilled, TbGhost2Filled } from "react-icons/tb";
+import { useDispatch } from "react-redux";
+import { removeUserFromFeed } from "../../redux/FeedSlice";
+import { api } from "../../utils/api";
+import { toast } from "react-hot-toast"; 
 
 const FeedCard = ({ profile }) => {
   const [activeTab, setActiveTab] = useState("about");
+  const [isSending, setIsSending] = useState(false);
+  const dispatch = useDispatch();
   const socialLinks = profile.socialLinks || {};
 
   const tabStyle = (tab) =>
@@ -25,12 +28,32 @@ const FeedCard = ({ profile }) => {
         : "bg-gray-200 dark:bg-zinc-700 text-gray-700 dark:text-gray-300"
     }`;
 
+  const handleSendRequest = async (connectionStatus, recipientId) => {
+    if (isSending) return;
+    try {
+      setIsSending(true);
+      await api.post(`/request/swipe/${connectionStatus}/${recipientId}`, {});
+      dispatch(removeUserFromFeed(recipientId));
+      toast.success(`${connectionStatus} sent!`);
+      dispatch(removeUserFromFeed(profile.user._id))
+    } catch (error) {
+      console.error("Swipe request failed:", error);
+      toast.error("Failed to send request.");
+    } finally {
+      setIsSending(false);
+    }
+  };
+
   return (
     <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl shadow-md p-6 flex flex-col justify-between text-center transition hover:shadow-lg h-[500px] max-w-md w-full">
       {/* Header */}
       <div className="flex flex-col items-center mb-4">
         <img
-          src={profile.avatar || null} // FIX: Pass null if avatar is an empty string
+          src={
+            profile.avatar?.trim()
+              ? profile.avatar
+              : "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_1280.png"
+          }
           alt={profile.userName}
           className="w-20 h-20 rounded-full object-cover border-2 border-indigo-500 mb-3"
         />
@@ -161,20 +184,33 @@ const FeedCard = ({ profile }) => {
       {/* Footer Actions */}
       <div className="flex justify-center gap-4 mt-2">
         <button
+          disabled={isSending}
+          className={`p-2 rounded-full transition ${
+            isSending
+              ? "bg-gray-300 dark:bg-zinc-700 cursor-not-allowed opacity-50"
+              : "bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-600 dark:text-white"
+          }`}
+          title="Ghost"
+          onClick={() => handleSendRequest("Ghost", profile.user._id)}
+        >
+          <TbGhost2Filled size={32} />
+        </button>
+        <button
+          disabled={isSending}
           className="bg-blue-100 hover:bg-blue-200 dark:bg-blue-800 dark:hover:bg-blue-700 text-blue-600 dark:text-white p-2 rounded-full transition"
           title="Message"
         >
           <FaCommentDots size={32} />
         </button>
         <button
-          className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-600 dark:text-white p-2 rounded-full transition"
-          title="Ghost"
-        >
-          <TbGhost2Filled size={32} />
-        </button>
-        <button
-          className="bg-pink-100 hover:bg-pink-200 dark:bg-pink-800 dark:hover:bg-pink-700 text-pink-600 dark:text-white p-2 rounded-full transition"
+          disabled={isSending}
+          className={`p-2 rounded-full transition ${
+            isSending
+              ? "bg-pink-200 dark:bg-pink-700 cursor-not-allowed opacity-50"
+              : "bg-pink-100 hover:bg-pink-200 dark:bg-pink-800 dark:hover:bg-pink-700 text-pink-600 dark:text-white"
+          }`}
           title="Vibe"
+          onClick={() => handleSendRequest("Vibe", profile.user._id)}
         >
           <TbHeartFilled size={32} />
         </button>

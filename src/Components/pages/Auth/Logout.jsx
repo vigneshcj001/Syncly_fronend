@@ -1,7 +1,7 @@
-// src/Components/CORE/Logout.jsx
+
 import React from "react";
 import { useDispatch } from "react-redux";
-import { removeUser } from "../../../redux/userSlice";
+import { removeUser } from "../../../redux/userSlice"
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../utils/api";
 
