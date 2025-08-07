@@ -10,15 +10,10 @@ import {
 } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { TbHeartFilled, TbGhost2Filled } from "react-icons/tb";
-import { useDispatch } from "react-redux";
-import { removeUserFromFeed } from "../../redux/FeedSlice";
-import { api } from "../../utils/api";
-import { toast } from "react-hot-toast"; 
 
-const FeedCard = ({ profile }) => {
+const FeedCard = ({ profile, onSwipe }) => {
   const [activeTab, setActiveTab] = useState("about");
   const [isSending, setIsSending] = useState(false);
-  const dispatch = useDispatch();
   const socialLinks = profile.socialLinks || {};
 
   const tabStyle = (tab) =>
@@ -32,13 +27,9 @@ const FeedCard = ({ profile }) => {
     if (isSending) return;
     try {
       setIsSending(true);
-      await api.post(`/request/swipe/${connectionStatus}/${recipientId}`, {});
-      dispatch(removeUserFromFeed(recipientId));
-      toast.success(`${connectionStatus} sent!`);
-      dispatch(removeUserFromFeed(profile.user._id))
+      await onSwipe(connectionStatus, recipientId);
     } catch (error) {
       console.error("Swipe request failed:", error);
-      toast.error("Failed to send request.");
     } finally {
       setIsSending(false);
     }
