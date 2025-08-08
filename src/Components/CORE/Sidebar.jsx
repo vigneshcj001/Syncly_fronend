@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../../redux/userSlice";
 import { api } from "../../utils/api";
 import SideBar_logo from "/SideBar_logo.png";
+import { FiLogOut } from "react-icons/fi";
 import Logout from "../pages/Auth/Logout";
 
 const Sidebar = () => {
@@ -98,7 +99,10 @@ const Sidebar = () => {
           className="flex items-center gap-3 hover:opacity-80 transition"
         >
           <img
-            src={user.avatar || "https://i.pravatar.cc/150"}
+            src={
+              user.avatar ||
+              "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_1280.png"
+            }
             alt="User Avatar"
             className="w-10 h-10 rounded-full object-cover"
           />
@@ -112,7 +116,15 @@ const Sidebar = () => {
             </p>
           )}
         </Link>
-        {open && <Logout />}
+        {open && (
+          <button
+            onClick={() => Logout()}
+            className="ml-auto text-red-500 hover:text-red-400"
+            title="Logout"
+          >
+            <FiLogOut size={20} />
+          </button>
+        )}
       </div>
     </div>
   );

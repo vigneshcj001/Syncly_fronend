@@ -1,240 +1,360 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
-import { api } from "../../utils/api"; // Your base Axios instance
+import { useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addUser } from "../../redux/userSlice";
+import { api } from "../../utils/api";
+import {
+  FaGithub,
+  FaLinkedin,
+  FaYoutube,
+  FaGlobe,
+  FaBriefcase,
+} from "react-icons/fa";
+import { SiX } from "react-icons/si";
 
-// --- API Functions defined directly in the component file ---
+// API functions
 const getProjects = (slug) => api.get(`/projects/${slug}`);
 const getExperiences = (slug) => api.get(`/experiences/${slug}`);
 const getEducations = (slug) => api.get(`/educations/${slug}`);
 const getCertifications = (slug) => api.get(`/certifications/${slug}`);
 const getPortfolio = (slug) => api.get(`/portfolio/${slug}`);
-// ---------------------------------------------------------
+const getProfileView = () => api.get(`/profile/view`);
+
+// Skeleton loader
+const SkeletonCard = () => (
+  <div className="animate-pulse p-4 border rounded-lg shadow-sm bg-gray-100 dark:bg-gray-800">
+    <div className="h-5 bg-gray-300 dark:bg-gray-700 rounded w-1/3 mb-2"></div>
+    <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-2/3"></div>
+  </div>
+);
+
+// Empty state
+const EmptyState = ({ message, icon }) => (
+  <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 p-6">
+    <div className="text-4xl mb-2">{icon}</div>
+    <p>{message}</p>
+  </div>
+);
+
+// Social links
+const SocialLink = ({ url, label, icon }) => (
+  <a
+    href={url}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label={label}
+    className="text-gray-700 dark:text-gray-300 hover:text-black flex items-center gap-1"
+  >
+    {icon}
+    <span className="sr-only">{label}</span>
+  </a>
+);
 
 const Portfolio = () => {
+  const dispatch = useDispatch();
+  const { slug } = useParams();
+
   const [projects, setProjects] = useState([]);
   const [experiences, setExperiences] = useState([]);
   const [educations, setEducations] = useState([]);
   const [certifications, setCertifications] = useState([]);
-  const [portfolio, setPortfolio] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const { slug } = useParams(); // Get slug from the URL to display the correct user's portfolio
-  const loggedInUser = useSelector((state) => state.user); // Get logged-in user to decide if "Edit" button should show
-
-  useEffect(() => {
-    if (!slug) {
-      setError("No user portfolio specified in the URL.");
+  const fetchData = async () => {
+    if (!slug || !/^[a-zA-Z0-9-_]+$/.test(slug)) {
+      setError("Invalid portfolio URL. Please check the username.");
       setLoading(false);
       return;
     }
 
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        // Use Promise.allSettled to ensure all requests complete, even if some fail (like a 404)
-        const results = await Promise.allSettled([
-          getProjects(slug),
-          getExperiences(slug),
-          getEducations(slug),
-          getCertifications(slug),
-          getPortfolio(slug), // This might fail with 404 if settings don't exist, which is okay
-        ]);
+    setLoading(true);
+    setError(null);
+    try {
+      const results = await Promise.allSettled([
+        getProjects(slug),
+        getExperiences(slug),
+        getEducations(slug),
+        getCertifications(slug),
+        getPortfolio(slug),
+        getProfileView(),
+      ]);
 
-        const [projRes, expRes, eduRes, certRes, portRes] = results;
+      const [projRes, expRes, eduRes, certRes, , profileRes] = results;
 
-        // Assign data from fulfilled promises
-        if (projRes.status === "fulfilled")
-          setProjects(projRes.value.data.data || []);
-        if (expRes.status === "fulfilled")
-          setExperiences(expRes.value.data.data || []);
-        if (eduRes.status === "fulfilled")
-          setEducations(eduRes.value.data.data || []);
-        if (certRes.status === "fulfilled")
-          setCertifications(certRes.value.data.data || []);
-        if (portRes.status === "fulfilled") {
-          setPortfolio(portRes.value.data.data);
-        } else {
-          // It's not a true error if portfolio settings are not found (404)
-          if (portRes.reason?.response?.status !== 404) {
-            console.error("Error fetching portfolio settings:", portRes.reason);
-          }
-        }
-
-        // Check if any of the main data fetches (non-settings) failed
-        const criticalErrors = results
-          .slice(0, 4)
-          .filter((r) => r.status === "rejected");
-        if (criticalErrors.length > 0) {
-          throw new Error(
-            "Could not load some portfolio sections. The user profile may not exist."
-          );
-        }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      if (projRes.status === "fulfilled")
+        setProjects(projRes.value.data.data || []);
+      if (expRes.status === "fulfilled")
+        setExperiences(expRes.value.data.data || []);
+      if (eduRes.status === "fulfilled")
+        setEducations(eduRes.value.data.data || []);
+      if (certRes.status === "fulfilled")
+        setCertifications(certRes.value.data.data || []);
+      if (profileRes.status === "fulfilled") {
+        setProfile(profileRes.value.data || null);
+        dispatch(
+          addUser(profileRes.value.data.profile || profileRes.value.data)
+        );
       }
-    };
 
+      const failedSections = results
+        .slice(0, 4)
+        .filter((r) => r.status === "rejected");
+      if (failedSections.length === 4) {
+        throw new Error("No portfolio found for this user.");
+      }
+    } catch (err) {
+      setError(err.message || "Something went wrong loading this portfolio.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
-  }, [slug]); // Re-run the fetch logic whenever the URL slug changes
+  }, [slug]);
 
   if (loading) {
     return (
-      <div className="p-6 text-center text-lg font-semibold">
-        Loading portfolio...
+      <div className="p-6 max-w-5xl mx-auto space-y-10">
+        <div className="border-b pb-4">
+          <h1 className="text-4xl font-bold animate-pulse bg-gray-200 dark:bg-gray-700 w-48 h-8 rounded"></h1>
+        </div>
+        {[...Array(3)].map((_, i) => (
+          <SkeletonCard key={i} />
+        ))}
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-6 text-center text-red-500 font-semibold">{error}</div>
+      <div className="p-6 text-center">
+        <p className="text-red-500 font-semibold mb-4">{error}</p>
+        <button
+          onClick={fetchData}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+        >
+          Retry
+        </button>
+      </div>
     );
   }
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-10">
       <div className="flex justify-between items-center border-b pb-4">
-        <h1 className="text-4xl font-bold">{slug}'s Portfolio</h1>
-        {/* Only show the "Edit Portfolio" button if the logged-in user is viewing their own page */}
-        {loggedInUser?.slug === slug && (
-          <Link
-            to="/portfolioEdit"
-            className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
-          >
-            Edit Portfolio
-          </Link>
-        )}
+        <h1 className="text-4xl font-bold">
+          {slug.charAt(0).toUpperCase() + slug.slice(1)}'s Portfolio
+        </h1>
       </div>
+      {/* Profile Section */}
+      {profile && (
+        <div className="p-4 border rounded-lg shadow-sm bg-gray-50 dark:bg-gray-800">
+          {profile.avatar && (
+            <img
+              src={profile.avatar}
+              alt={`${profile.userName}'s avatar`}
+              className="w-24 h-24 rounded-full mb-4"
+            />
+          )}
+          <h2 className="text-2xl font-bold mb-2">{profile.userName}</h2>
+          <p className="text-gray-600 dark:text-gray-300">{profile.emailID}</p>
 
-      {portfolio ? (
-        <section className="p-5 border rounded-lg bg-gray-50 dark:bg-gray-800 shadow-md">
-          <h2 className="text-2xl font-semibold mb-3">Portfolio Settings</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <p>
-              <strong>Theme Color:</strong>{" "}
-              <span
-                className="inline-block w-6 h-6 rounded-full border"
-                style={{ backgroundColor: portfolio.theme?.primaryColor }}
-              ></span>
+          {profile.ussrName && (
+            <p className="text-gray-700 dark:text-gray-300">
+              <strong>USSR Name:</strong> {profile.ussrName}
             </p>
-            <p>
-              <strong>Public:</strong> {portfolio.isPublic ? "Yes" : "No"}
-            </p>
-            <p className="md:col-span-2">
-              <strong>Custom Domain:</strong>{" "}
-              {portfolio.customDomain || "Not set"}
-            </p>
+          )}
+          <div className="flex items-center gap-1 text-gray-500 my-2">
+            <FaBriefcase />
+            <span>
+              {profile.bio !== "No bio provided"
+                ? profile.bio
+                : "Bio not specified."}
+            </span>
           </div>
-        </section>
-      ) : (
-        <section className="p-5 border-l-4 border-yellow-500 bg-yellow-50 dark:bg-gray-800 text-yellow-800 dark:text-yellow-300 rounded-lg">
-          <h2 className="text-2xl font-semibold">Portfolio Settings</h2>
-          <p>Portfolio settings have not been configured for this user.</p>
-        </section>
+
+          <div className="mt-3">
+            <strong>Stack:</strong>{" "}
+            {profile.stack?.length ? profile.stack.join(", ") : "N/A"}
+          </div>
+          <div>
+            <strong>Skills:</strong>{" "}
+            {profile.skills?.length ? profile.skills.join(", ") : "N/A"}
+          </div>
+          <div>
+            <strong>Interests:</strong>{" "}
+            {profile.interests?.length ? profile.interests.join(", ") : "N/A"}
+          </div>
+
+          {profile.location && profile.location !== "Unknown" && (
+            <p className="mt-2 text-gray-500 dark:text-gray-400">
+              Location: {profile.location}
+            </p>
+          )}
+
+          {/* Social Links */}
+          <div className="mt-4 flex flex-wrap gap-4">
+            {profile.socialLinks?.portfolio &&
+              profile.socialLinks.portfolio.trim() !== "" && (
+                <SocialLink
+                  url={profile.socialLinks.portfolio}
+                  label="Portfolio"
+                  icon={<FaGlobe />}
+                />
+              )}
+            {profile.socialLinks?.github &&
+              profile.socialLinks.github.trim() !== "" && (
+                <SocialLink
+                  url={profile.socialLinks.github}
+                  label="GitHub"
+                  icon={<FaGithub />}
+                />
+              )}
+            {profile.socialLinks?.linkedin &&
+              profile.socialLinks.linkedin.trim() !== "" && (
+                <SocialLink
+                  url={profile.socialLinks.linkedin}
+                  label="LinkedIn"
+                  icon={<FaLinkedin />}
+                />
+              )}
+            {profile.socialLinks?.youtube &&
+              profile.socialLinks.youtube.trim() !== "" && (
+                <SocialLink
+                  url={profile.socialLinks.youtube}
+                  label="YouTube"
+                  icon={<FaYoutube />}
+                />
+              )}
+            {profile.socialLinks?.X && profile.socialLinks.X.trim() !== "" && (
+              <SocialLink
+                url={profile.socialLinks.X}
+                label="X"
+                icon={<SiX />}
+              />
+            )}
+          </div>
+        </div>
       )}
 
+      {/* Projects Section */}
       <section>
         <h2 className="text-3xl font-semibold border-b pb-2 mb-4">Projects</h2>
         {projects.length > 0 ? (
-          <ul className="space-y-4">
+          <div className="grid md:grid-cols-2 gap-4">
             {projects.map((p) => (
-              <li key={p._id} className="p-4 border rounded-lg shadow-sm">
+              <div
+                key={p._id}
+                className="p-4 border rounded-lg shadow-sm hover:shadow-md transition"
+              >
                 <h3 className="font-bold text-xl">{p.title}</h3>
                 <p className="text-gray-700 dark:text-gray-300 mt-1">
                   {p.description}
                 </p>
-                {p.liveDemoLink && (
-                  <a
-                    href={p.liveDemoLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline mr-4"
-                  >
-                    Live Demo
-                  </a>
-                )}
-                {p.sourceCodeLink && (
-                  <a
-                    href={p.sourceCodeLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline"
-                  >
-                    Source Code
-                  </a>
-                )}
-              </li>
+                <div className="mt-2 flex gap-4">
+                  {p.liveDemoLink && (
+                    <a
+                      href={p.liveDemoLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      Live Demo
+                    </a>
+                  )}
+                  {p.sourceCodeLink && (
+                    <a
+                      href={p.sourceCodeLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      Source Code
+                    </a>
+                  )}
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         ) : (
-          <p>This user has not added any projects yet.</p>
+          <EmptyState message="No projects added yet." icon="📂" />
         )}
       </section>
 
+      {/* Experience Section */}
       <section>
         <h2 className="text-3xl font-semibold border-b pb-2 mb-4">
           Experience
         </h2>
         {experiences.length > 0 ? (
-          <ul className="space-y-4">
+          <div className="space-y-4">
             {experiences.map((e) => (
-              <li key={e._id} className="p-4 border rounded-lg shadow-sm">
+              <div
+                key={e._id}
+                className="p-4 border rounded-lg shadow-sm hover:shadow-md transition"
+              >
                 <h3 className="font-bold text-xl">
                   {e.role} @ {e.company}
                 </h3>
                 <p className="text-gray-700 dark:text-gray-300 mt-1">
                   {e.description}
                 </p>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         ) : (
-          <p>This user has not added any experience yet.</p>
+          <EmptyState message="No experience listed yet." icon="💼" />
         )}
       </section>
 
+      {/* Education Section */}
       <section>
         <h2 className="text-3xl font-semibold border-b pb-2 mb-4">Education</h2>
         {educations.length > 0 ? (
-          <ul className="space-y-4">
+          <div className="space-y-4">
             {educations.map((edu) => (
-              <li key={edu._id} className="p-4 border rounded-lg shadow-sm">
+              <div
+                key={edu._id}
+                className="p-4 border rounded-lg shadow-sm hover:shadow-md transition"
+              >
                 <h3 className="font-bold text-xl">
                   {edu.degree} - {edu.institution}
                 </h3>
                 <p className="text-gray-700 dark:text-gray-300 mt-1">
                   {edu.fieldOfStudy}
                 </p>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         ) : (
-          <p>This user has not added any education history yet.</p>
+          <EmptyState message="No education history yet." icon="🎓" />
         )}
       </section>
 
+      {/* Certifications Section */}
       <section>
         <h2 className="text-3xl font-semibold border-b pb-2 mb-4">
           Certifications
         </h2>
         {certifications.length > 0 ? (
-          <ul className="space-y-4">
+          <div className="space-y-4">
             {certifications.map((cert) => (
-              <li key={cert._id} className="p-4 border rounded-lg shadow-sm">
+              <div
+                key={cert._id}
+                className="p-4 border rounded-lg shadow-sm hover:shadow-md transition"
+              >
                 <h3 className="font-bold text-xl">{cert.name}</h3>
                 <p className="text-gray-700 dark:text-gray-300 mt-1">
                   Issued by: {cert.issuingOrganization}
                 </p>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         ) : (
-          <p>This user has not added any certifications yet.</p>
+          <EmptyState message="No certifications yet." icon="📜" />
         )}
       </section>
     </div>

@@ -14,7 +14,7 @@ const ProfileEditor = () => {
   const fetchProfile = async () => {
     try {
       const res = await api.get("/profile/view");
-      if (res.data.success) {
+      if (res.data.success && res.data.profile) {
         dispatch(addUser(res.data.profile));
         setProfile(res.data.profile);
       } else {
@@ -30,8 +30,13 @@ const ProfileEditor = () => {
     fetchProfile();
   }, []);
 
-  if (errorMsg) return <div className="text-red-500">{errorMsg}</div>;
-  if (!profile) return <div className="text-center">Loading...</div>;
+  if (errorMsg) {
+    return <div className="text-red-500">{errorMsg}</div>;
+  }
+
+  if (!profile) {
+    return <div className="text-center">Loading...</div>;
+  }
 
   return (
     <div className="w-full px-4 md:px-8 lg:px-16 xl:px-24 py-8">

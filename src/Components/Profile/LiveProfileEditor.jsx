@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import { useDispatch } from "react-redux";
 import { api } from "../../utils/api";
 import { addUser } from "../../redux/userSlice";
 import FeedCard from "../Feed/FeedCard";
 import { toast } from "react-hot-toast";
-import { memo } from "react";
 import {
   FaSave,
   FaUserEdit,
@@ -23,7 +22,7 @@ import { TbStack3 } from "react-icons/tb";
 import { BsPersonCircle } from "react-icons/bs";
 import { useSpring, animated } from "react-spring";
 
-// Helper Component: TagsInput for handling arrays of strings
+// ----------------- Helper: TagsInput -----------------
 const TagsInput = ({ value, onChange, placeholder }) => {
   const [inputValue, setInputValue] = useState("");
 
@@ -73,7 +72,7 @@ const TagsInput = ({ value, onChange, placeholder }) => {
   );
 };
 
-// Helper Component: ProgressBar for showing profile completion
+// ----------------- Helper: ProgressBar -----------------
 const ProgressBar = ({ value }) => {
   const animatedProps = useSpring({
     width: `${value}%`,
@@ -82,39 +81,60 @@ const ProgressBar = ({ value }) => {
   return (
     <div className="w-full bg-gray-700 rounded-full h-2.5">
       <animated.div
-        className="bg-blue-600 h-2.5 rounded-full transition-all duration-500"
+        className="bg-blue-600 h-2.5 rounded-full"
         style={animatedProps}
       ></animated.div>
     </div>
   );
 };
 
-const LiveProfileEditor = ({ profile, setProfile, setEditing }) => {
+// ----------------- Main Component -----------------
+const LiveProfileEditor = ({ profile = {}, setProfile, setEditing }) => {
   const dispatch = useDispatch();
 
-  // State for all editable profile fields
-  const [userName, setUserName] = useState(profile.userName || "");
-  const [avatar, setAvatar] = useState(profile.avatar || "");
-  const [bio, setBio] = useState(profile.bio || "");
-  const [domain, setDomain] = useState(profile.domain || "");
-  const [stack, setStack] = useState(profile.stack || []);
-  const [skills, setSkills] = useState(profile.skills || []);
-  const [interests, setInterests] = useState(profile.interests || []);
-  const [location, setLocation] = useState(profile.location || "");
-  const [mentorshipRole, setMentorshipRole] = useState(
-    profile.mentorshipRole || "learner"
-  );
+  // State initialization
+  const [userName, setUserName] = useState("");
+  const [avatar, setAvatar] = useState("");
+  const [bio, setBio] = useState("");
+  const [domain, setDomain] = useState("");
+  const [stack, setStack] = useState([]);
+  const [skills, setSkills] = useState([]);
+  const [interests, setInterests] = useState([]);
+  const [location, setLocation] = useState("");
+  const [mentorshipRole, setMentorshipRole] = useState("learner");
   const [socialLinks, setSocialLinks] = useState({
-    portfolio: profile.socialLinks?.portfolio || "",
-    github: profile.socialLinks?.github || "",
-    X: profile.socialLinks?.X || "",
-    linkedin: profile.socialLinks?.linkedin || "",
-    youtube: profile.socialLinks?.youtube || "",
+    portfolio: "",
+    github: "",
+    X: "",
+    linkedin: "",
+    youtube: "",
   });
   const [isSaving, setIsSaving] = useState(false);
   const [profileCompletion, setProfileCompletion] = useState(0);
 
-  // Effect to calculate profile completion percentage
+  // Sync state when profile changes
+  useEffect(() => {
+    if (profile) {
+      setUserName(profile.userName || "");
+      setAvatar(profile.avatar || "");
+      setBio(profile.bio || "");
+      setDomain(profile.domain || "");
+      setStack(profile.stack || []);
+      setSkills(profile.skills || []);
+      setInterests(profile.interests || []);
+      setLocation(profile.location || "");
+      setMentorshipRole(profile.mentorshipRole || "learner");
+      setSocialLinks({
+        portfolio: profile.socialLinks?.portfolio || "",
+        github: profile.socialLinks?.github || "",
+        X: profile.socialLinks?.X || "",
+        linkedin: profile.socialLinks?.linkedin || "",
+        youtube: profile.socialLinks?.youtube || "",
+      });
+    }
+  }, [profile]);
+
+  // Calculate profile completion
   useEffect(() => {
     const fields = [userName, avatar, bio, domain, location, mentorshipRole];
     const arrayFields = [stack, skills, interests];
@@ -144,7 +164,7 @@ const LiveProfileEditor = ({ profile, setProfile, setEditing }) => {
     socialLinks,
   ]);
 
-  // Handler for saving the updated profile
+  // Save handler
   const handleUpdate = async () => {
     setIsSaving(true);
     const updatedProfile = {
@@ -161,13 +181,13 @@ const LiveProfileEditor = ({ profile, setProfile, setEditing }) => {
     };
 
     try {
-      const response = await api.put("/user/profile/update", updatedProfile);
+      const response = await api.put("/profile/edit", updatedProfile);
       if (response.data.success) {
         const updatedUser = response.data.user;
-        dispatch(addUser(updatedUser)); // Update Redux state
-        setProfile(updatedUser); // Update local parent state
+        dispatch(addUser(updatedUser));
+        setProfile(updatedUser);
         toast.success("Profile saved successfully!");
-        setTimeout(() => setEditing(false), 1000); // Go back after a short delay
+        setTimeout(() => setEditing(false), 1000);
       } else {
         throw new Error(response.data.message || "Failed to update profile.");
       }
@@ -181,7 +201,6 @@ const LiveProfileEditor = ({ profile, setProfile, setEditing }) => {
     }
   };
 
-  // Common styles for inputs and labels
   const inputStyle =
     "border border-gray-700 text-gray-100 bg-gray-900 rounded px-3 py-2 w-full mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-md placeholder-gray-400 transition-all duration-300";
   const labelStyle = "flex items-center gap-2 text-gray-400 font-semibold mb-2";
@@ -194,7 +213,7 @@ const LiveProfileEditor = ({ profile, setProfile, setEditing }) => {
   return (
     <animated.div style={animatedProps} className="p-6 mt-10">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        {/* Left - Profile Editor Form */}
+        {/* Left - Profile Form */}
         <div className="lg:col-span-2 bg-gray-950 shadow-xl rounded-2xl p-6 text-white">
           <div className="flex justify-between items-center mb-6 border-b pb-2 border-blue-800">
             <h2 className="text-3xl font-bold text-blue-500 flex items-center gap-3">
@@ -202,20 +221,21 @@ const LiveProfileEditor = ({ profile, setProfile, setEditing }) => {
             </h2>
             <button
               onClick={() => setEditing(false)}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors"
-              aria-label="Back to profile"
+              className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700"
             >
               <FaArrowLeft />
               <span>Back</span>
             </button>
           </div>
 
+          {/* Completion */}
           <div className="mb-6">
             <label className={labelStyle}>Profile Completion</label>
             <ProgressBar value={profileCompletion} />
           </div>
 
-          {/* Form Fields */}
+          {/* Form fields */}
+          {/* Username & Avatar */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className={labelStyle}>
@@ -243,6 +263,7 @@ const LiveProfileEditor = ({ profile, setProfile, setEditing }) => {
             </div>
           </div>
 
+          {/* Bio */}
           <div>
             <label className={labelStyle}>
               <MdWork /> Bio
@@ -256,6 +277,7 @@ const LiveProfileEditor = ({ profile, setProfile, setEditing }) => {
             ></textarea>
           </div>
 
+          {/* Domain & Location */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className={labelStyle}>
@@ -283,6 +305,7 @@ const LiveProfileEditor = ({ profile, setProfile, setEditing }) => {
             </div>
           </div>
 
+          {/* Tags */}
           <div>
             <label className={labelStyle}>
               <TbStack3 /> Tech Stack
@@ -314,6 +337,7 @@ const LiveProfileEditor = ({ profile, setProfile, setEditing }) => {
             />
           </div>
 
+          {/* Mentorship */}
           <div>
             <label className={labelStyle}>
               <SiCodementor /> Mentorship Role
@@ -329,83 +353,40 @@ const LiveProfileEditor = ({ profile, setProfile, setEditing }) => {
             </select>
           </div>
 
+          {/* Social Links */}
           <h3 className="text-xl font-bold text-blue-500 mt-6 mb-4 border-t pt-4 border-gray-800">
             Social Links
           </h3>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
-            <div className="mb-3">
-              <label className={labelStyle}>
-                <AiOutlineGlobal /> Portfolio
-              </label>
-              <input
-                type="text"
-                value={socialLinks.portfolio}
-                onChange={(e) =>
-                  setSocialLinks({ ...socialLinks, portfolio: e.target.value })
-                }
-                className={inputStyle}
-                placeholder="Your personal site URL"
-              />
-            </div>
-            <div className="mb-3">
-              <label className={labelStyle}>
-                <FaGithub /> GitHub
-              </label>
-              <input
-                type="text"
-                value={socialLinks.github}
-                onChange={(e) =>
-                  setSocialLinks({ ...socialLinks, github: e.target.value })
-                }
-                className={inputStyle}
-                placeholder="GitHub profile URL"
-              />
-            </div>
-            <div className="mb-3">
-              <label className={labelStyle}>
-                <FaLinkedin /> LinkedIn
-              </label>
-              <input
-                type="text"
-                value={socialLinks.linkedin}
-                onChange={(e) =>
-                  setSocialLinks({ ...socialLinks, linkedin: e.target.value })
-                }
-                className={inputStyle}
-                placeholder="LinkedIn profile URL"
-              />
-            </div>
-            <div className="mb-3">
-              <label className={labelStyle}>
-                <FaXTwitter /> X (Twitter)
-              </label>
-              <input
-                type="text"
-                value={socialLinks.X}
-                onChange={(e) =>
-                  setSocialLinks({ ...socialLinks, X: e.target.value })
-                }
-                className={inputStyle}
-                placeholder="X profile URL"
-              />
-            </div>
-            <div className="mb-3">
-              <label className={labelStyle}>
-                <FaYoutube /> YouTube
-              </label>
-              <input
-                type="text"
-                value={socialLinks.youtube}
-                onChange={(e) =>
-                  setSocialLinks({ ...socialLinks, youtube: e.target.value })
-                }
-                className={inputStyle}
-                placeholder="YouTube channel URL"
-              />
-            </div>
+            {[
+              {
+                label: "Portfolio",
+                icon: <AiOutlineGlobal />,
+                key: "portfolio",
+              },
+              { label: "GitHub", icon: <FaGithub />, key: "github" },
+              { label: "LinkedIn", icon: <FaLinkedin />, key: "linkedin" },
+              { label: "X (Twitter)", icon: <FaXTwitter />, key: "X" },
+              { label: "YouTube", icon: <FaYoutube />, key: "youtube" },
+            ].map(({ label, icon, key }) => (
+              <div key={key} className="mb-3">
+                <label className={labelStyle}>
+                  {icon} {label}
+                </label>
+                <input
+                  type="text"
+                  value={socialLinks[key]}
+                  onChange={(e) =>
+                    setSocialLinks({ ...socialLinks, [key]: e.target.value })
+                  }
+                  className={inputStyle}
+                  placeholder={`${label} URL`}
+                />
+              </div>
+            ))}
           </div>
 
+          {/* Save */}
           <div className="flex justify-end mt-4">
             <button
               onClick={handleUpdate}
