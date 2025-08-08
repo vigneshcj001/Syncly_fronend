@@ -54,7 +54,6 @@ const Sidebar = () => {
     { name: "Chatroom", path: "/chatroom", icon: ClipboardList },
     { name: "Profile", path: "/profile", icon: User },
     { name: "Portfolio", path: "/portfolio", icon: BriefcaseBusiness },
-    { name: "Portfolio Editor", path: "/portfolioEdit", icon: BriefcaseBusiness },
   ];
 
   const isActive = (path) =>

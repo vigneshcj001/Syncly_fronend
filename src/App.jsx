@@ -19,7 +19,8 @@ import ProfileEditor from "./Components/Profile/ProfileEditor";
 import YourVibes from "./Components/Vibes_AND_Mutual/YourVibes";
 import MutualLinks from "./Components/Vibes_AND_Mutual/MutualLinks";
 import Chatroom from "./Components/Chatroom/Chatroom";
-
+import Portfolio from "./Components/Portfolio/Portfolio";
+import PortfolioEdit from "./Components/Portfolio/PortfolioEdit";
 // Layout for Protected Routes
 function MainLayout({ children }) {
   return (
@@ -103,7 +104,7 @@ function App() {
           element={
             <ProtectedRoute>
               <MainLayout>
-                <Chatroom/>
+                <Chatroom />
               </MainLayout>
             </ProtectedRoute>
           }
@@ -124,6 +125,26 @@ function App() {
             <ProtectedRoute>
               <MainLayout>
                 <ProfileEditor />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/portfolio"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <Portfolio />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/portfolioEdit"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <PortfolioEdit />
               </MainLayout>
             </ProtectedRoute>
           }
