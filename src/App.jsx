@@ -130,7 +130,7 @@ function App() {
           }
         />
         <Route
-          path="/portfolio"
+          path="/portfolio/:slug"
           element={
             <ProtectedRoute>
               <MainLayout>

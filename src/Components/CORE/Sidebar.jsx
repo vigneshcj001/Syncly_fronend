@@ -8,7 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Link as LinkIcon,
-  BriefcaseBusiness
+  BriefcaseBusiness,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,42 +19,29 @@ import Logout from "../pages/Auth/Logout";
 
 const Sidebar = () => {
   const [open, setOpen] = useState(true);
-  const dispatch = useDispatch();
   const location = useLocation();
-  const navigate = useNavigate();
 
-  const { userName, avatar } = useSelector((state) => state.user) || {};
-  const [loading, setLoading] = useState(true);
+  // Get user data from Redux, including the slug
+  const user = useSelector((state) => state.user) || {};
 
-  const fetchUserProfile = async () => {
-    try {
-      const res = await api.get("/profile/view");
-
-      if (res.data && res.data.success) {
-        dispatch(addUser(res.data.profile));
-      } else {
-        console.error("Failed to fetch profile:", res.data.message);
-      }
-    } catch (err) {
-      console.error("API Error:", err);
-      navigate("/login"); // If unauthorized or session expired
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchUserProfile();
-  }, []);
-
+  // Define navigation items. The portfolio link is now dynamic.
   const navItems = [
     { name: "Feed", path: "/", icon: Home },
     { name: "Your pending Vibes", path: "/vibes", icon: MessageCircleHeart },
     { name: "Mutual Links", path: "/mutualLinks", icon: LinkIcon },
     { name: "Chatroom", path: "/chatroom", icon: ClipboardList },
     { name: "Profile", path: "/profile", icon: User },
-    { name: "Portfolio", path: "/portfolio", icon: BriefcaseBusiness },
-    { name: "Portfolio Editor", path: "/portfolioEdit", icon: BriefcaseBusiness },
+    // Corrected Portfolio link: It dynamically uses the user's slug
+    {
+      name: "My Portfolio",
+      path: `/portfolio/${user.slug}`,
+      icon: BriefcaseBusiness,
+    },
+    {
+      name: "Portfolio Editor",
+      path: "/portfolioEdit",
+      icon: BriefcaseBusiness,
+    },
   ];
 
   const isActive = (path) =>
@@ -85,12 +72,17 @@ const Sidebar = () => {
 
         <nav className="mt-4 flex flex-col gap-1">
           {navItems.map(({ name, path, icon: Icon }) => (
+            // Disable the portfolio link if the slug isn't available yet
             <Link
               key={name}
               to={path}
               className={`flex items-center gap-3 px-4 py-2 rounded-md transition-all ${isActive(
                 path
-              )}`}
+              )} ${
+                name === "My Portfolio" && !user.slug
+                  ? "pointer-events-none opacity-50"
+                  : ""
+              }`}
             >
               <Icon size={20} />
               {open && <span className="text-sm">{name}</span>}
@@ -101,37 +93,26 @@ const Sidebar = () => {
 
       {/* Bottom Section */}
       <div className="border-t border-gray-700 p-4 flex items-center gap-3">
-        {loading ? (
-          <div className="text-sm text-gray-400">Loading...</div>
-        ) : (
-          <>
-            <Link
-              to="/profile"
-              className="flex items-center gap-3 hover:opacity-80 transition"
+        <Link
+          to="/profile"
+          className="flex items-center gap-3 hover:opacity-80 transition"
+        >
+          <img
+            src={user.avatar || "https://i.pravatar.cc/150"}
+            alt="User Avatar"
+            className="w-10 h-10 rounded-full object-cover"
+          />
+          {open && (
+            <p
+              className="text-sm font-medium truncate"
+              style={{ maxWidth: "150px" }}
+              title={user.userName}
             >
-              <img
-                src={avatar || "https://i.pravatar.cc/150"}
-                alt="User Avatar"
-                className="w-10 h-10 rounded-full object-cover"
-              />
-              {open && (
-                <p
-                  className="text-sm font-medium truncate"
-                  style={{ maxWidth: "150px" }}
-                  title={userName}
-                >
-                  {userName || "User"}
-                </p>
-              )}
-            </Link>
-
-            {open && (
-              <Logout className="flex items-center gap-1 text-xs text-red-400 hover:text-red-500 ml-auto">
-                <LogOut size={14} /> Logout
-              </Logout>
-            )}
-          </>
-        )}
+              {user.userName || "User"}
+            </p>
+          )}
+        </Link>
+        {open && <Logout />}
       </div>
     </div>
   );
