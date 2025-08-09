@@ -324,10 +324,7 @@ const Portfolio = () => {
             ))}
           </div>
         ) : (
-          <EmptyState
-            message="No experience listed yet."
-            icon={<FaBriefcase />}
-          />
+          <EmptyState message="No experience listed yet." icon={<FaBriefcase />} />
         )}
       </section>
 
@@ -351,10 +348,7 @@ const Portfolio = () => {
             ))}
           </div>
         ) : (
-          <EmptyState
-            message="No education history yet."
-            icon={<FaUniversity />}
-          />
+          <EmptyState message="No education history yet." icon={<FaUniversity />} />
         )}
       </section>
 
@@ -380,10 +374,7 @@ const Portfolio = () => {
             ))}
           </div>
         ) : (
-          <EmptyState
-            message="No certifications yet."
-            icon={<FaCertificate />}
-          />
+          <EmptyState message="No certifications yet." icon={<FaCertificate />} />
         )}
       </section>
     </div>

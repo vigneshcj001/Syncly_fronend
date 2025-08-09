@@ -9,17 +9,6 @@ import {
   FaYoutube,
   FaGlobe,
   FaBriefcase,
-  FaMapMarkerAlt,
-  FaEnvelope,
-  FaCode,
-  FaExternalLinkAlt,
-  FaUniversity,
-  FaBook,
-  FaCertificate,
-  FaBuilding,
-  FaUserTie,
-  FaTools,
-  FaLightbulb,
 } from "react-icons/fa";
 import { SiX } from "react-icons/si";
 
@@ -160,7 +149,6 @@ const Portfolio = () => {
           {slug.charAt(0).toUpperCase() + slug.slice(1)}'s Portfolio
         </h1>
       </div>
-
       {/* Profile Section */}
       {profile && (
         <div className="p-4 border rounded-lg shadow-sm bg-gray-50 dark:bg-gray-800">
@@ -172,16 +160,13 @@ const Portfolio = () => {
             />
           )}
           <h2 className="text-2xl font-bold mb-2">{profile.userName}</h2>
-          <p className="text-gray-600 dark:text-gray-300 flex items-center gap-2">
-            <FaEnvelope /> {profile.emailID}
-          </p>
+          <p className="text-gray-600 dark:text-gray-300">{profile.emailID}</p>
 
           {profile.ussrName && (
             <p className="text-gray-700 dark:text-gray-300">
               <strong>USSR Name:</strong> {profile.ussrName}
             </p>
           )}
-
           <div className="flex items-center gap-1 text-gray-500 my-2">
             <FaBriefcase />
             <span>
@@ -191,25 +176,22 @@ const Portfolio = () => {
             </span>
           </div>
 
-          <div className="mt-3 flex items-center gap-2">
-            <FaTools />
+          <div className="mt-3">
             <strong>Stack:</strong>{" "}
             {profile.stack?.length ? profile.stack.join(", ") : "N/A"}
           </div>
-          <div className="flex items-center gap-2">
-            <FaLightbulb />
+          <div>
             <strong>Skills:</strong>{" "}
             {profile.skills?.length ? profile.skills.join(", ") : "N/A"}
           </div>
-          <div className="flex items-center gap-2">
-            <FaLightbulb />
+          <div>
             <strong>Interests:</strong>{" "}
             {profile.interests?.length ? profile.interests.join(", ") : "N/A"}
           </div>
 
           {profile.location && profile.location !== "Unknown" && (
-            <p className="mt-2 text-gray-500 dark:text-gray-400 flex items-center gap-2">
-              <FaMapMarkerAlt /> {profile.location}
+            <p className="mt-2 text-gray-500 dark:text-gray-400">
+              Location: {profile.location}
             </p>
           )}
 
@@ -278,9 +260,9 @@ const Portfolio = () => {
                       href={p.liveDemoLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-500 hover:underline flex items-center gap-1"
+                      className="text-blue-500 hover:underline"
                     >
-                      <FaExternalLinkAlt /> Live Demo
+                      Live Demo
                     </a>
                   )}
                   {p.sourceCodeLink && (
@@ -288,9 +270,9 @@ const Portfolio = () => {
                       href={p.sourceCodeLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-500 hover:underline flex items-center gap-1"
+                      className="text-blue-500 hover:underline"
                     >
-                      <FaCode /> Source Code
+                      Source Code
                     </a>
                   )}
                 </div>
@@ -298,7 +280,7 @@ const Portfolio = () => {
             ))}
           </div>
         ) : (
-          <EmptyState message="No projects added yet." icon={<FaCode />} />
+          <EmptyState message="No projects added yet." icon="📂" />
         )}
       </section>
 
@@ -314,8 +296,8 @@ const Portfolio = () => {
                 key={e._id}
                 className="p-4 border rounded-lg shadow-sm hover:shadow-md transition"
               >
-                <h3 className="font-bold text-xl flex items-center gap-2">
-                  <FaUserTie /> {e.role} @ <FaBuilding /> {e.company}
+                <h3 className="font-bold text-xl">
+                  {e.role} @ {e.company}
                 </h3>
                 <p className="text-gray-700 dark:text-gray-300 mt-1">
                   {e.description}
@@ -324,10 +306,7 @@ const Portfolio = () => {
             ))}
           </div>
         ) : (
-          <EmptyState
-            message="No experience listed yet."
-            icon={<FaBriefcase />}
-          />
+          <EmptyState message="No experience listed yet." icon="💼" />
         )}
       </section>
 
@@ -341,8 +320,8 @@ const Portfolio = () => {
                 key={edu._id}
                 className="p-4 border rounded-lg shadow-sm hover:shadow-md transition"
               >
-                <h3 className="font-bold text-xl flex items-center gap-2">
-                  <FaUniversity /> {edu.degree} - <FaBook /> {edu.institution}
+                <h3 className="font-bold text-xl">
+                  {edu.degree} - {edu.institution}
                 </h3>
                 <p className="text-gray-700 dark:text-gray-300 mt-1">
                   {edu.fieldOfStudy}
@@ -351,10 +330,7 @@ const Portfolio = () => {
             ))}
           </div>
         ) : (
-          <EmptyState
-            message="No education history yet."
-            icon={<FaUniversity />}
-          />
+          <EmptyState message="No education history yet." icon="🎓" />
         )}
       </section>
 
@@ -370,9 +346,7 @@ const Portfolio = () => {
                 key={cert._id}
                 className="p-4 border rounded-lg shadow-sm hover:shadow-md transition"
               >
-                <h3 className="font-bold text-xl flex items-center gap-2">
-                  <FaCertificate /> {cert.name}
-                </h3>
+                <h3 className="font-bold text-xl">{cert.name}</h3>
                 <p className="text-gray-700 dark:text-gray-300 mt-1">
                   Issued by: {cert.issuingOrganization}
                 </p>
@@ -380,10 +354,7 @@ const Portfolio = () => {
             ))}
           </div>
         ) : (
-          <EmptyState
-            message="No certifications yet."
-            icon={<FaCertificate />}
-          />
+          <EmptyState message="No certifications yet." icon="📜" />
         )}
       </section>
     </div>
