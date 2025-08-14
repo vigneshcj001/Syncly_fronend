@@ -3,6 +3,7 @@ import userReducer from "./userSlice";
 import feedReducer from "./FeedSlice";
 import mutualReducer from "./mutualLinksSlice";
 import vibesReducer from "./vibesSlices";
+import chatReducer from "./chatSlice";
 
 const appStore = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const appStore = configureStore({
     feed: feedReducer,
     mutual: mutualReducer,
     vibes: vibesReducer,
+    chat: chatReducer,
   },
 });
 

@@ -21,6 +21,7 @@ import MutualLinks from "./Components/Vibes_AND_Mutual/MutualLinks";
 import Chatroom from "./Components/Chatroom/Chatroom";
 import Portfolio from "./Components/Portfolio/Portfolio";
 import PortfolioEdit from "./Components/Portfolio/PortfolioEdit";
+
 // Layout for Protected Routes
 function MainLayout({ children }) {
   return (
@@ -100,7 +101,7 @@ function App() {
           }
         />
         <Route
-          path="/chatroom"
+          path="/chatroom/:targetUserID"
           element={
             <ProtectedRoute>
               <MainLayout>

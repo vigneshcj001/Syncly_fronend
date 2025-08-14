@@ -30,7 +30,6 @@ const Sidebar = () => {
     { name: "Feed", path: "/", icon: Home },
     { name: "Your pending Vibes", path: "/vibes", icon: MessageCircleHeart },
     { name: "Mutual Links", path: "/mutualLinks", icon: LinkIcon },
-    { name: "Chatroom", path: "/chatroom", icon: ClipboardList },
     { name: "Profile", path: "/profile", icon: User },
     // Corrected Portfolio link: It dynamically uses the user's slug
     {
@@ -117,13 +116,12 @@ const Sidebar = () => {
           )}
         </Link>
         {open && (
-          <button
-            onClick={() => Logout()}
+          <Logout
             className="ml-auto text-red-500 hover:text-red-400"
             title="Logout"
           >
             <FiLogOut size={20} />
-          </button>
+          </Logout>
         )}
       </div>
     </div>
