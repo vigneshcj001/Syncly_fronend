@@ -15,7 +15,7 @@ const Chatroom = () => {
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
 
-  // Auto-scroll to bottom when messages change
+  // Scroll to bottom when messages change
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -112,7 +112,7 @@ const Chatroom = () => {
 
       {/* Messages */}
       <ol
-        className="w-full max-w-4xl flex flex-col gap-3 mt-6 flex-1 overflow-y-auto overflow-x-hidden"
+        className="w-full max-w-4xl flex flex-col gap-3 mt-6 flex-1 overflow-y-auto"
         style={{ maxHeight: "70vh" }}
       >
         {messages.map((msg, index) => {
@@ -122,7 +122,7 @@ const Chatroom = () => {
           return (
             <li
               key={index}
-              className={`relative max-w-[80%] break-words px-4 py-2 rounded-2xl text-sm md:text-base
+              className={`relative max-w-[80%] px-4 py-2 rounded-2xl text-sm md:text-base
                 ${
                   msg.sent
                     ? `bg-blue-500 text-white self-end ${
