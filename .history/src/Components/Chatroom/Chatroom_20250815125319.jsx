@@ -27,12 +27,13 @@ const Chatroom = () => {
       targetUserID,
     });
 
-    socket.on("messageReceived", ({ userName, avatar, text }) => {
-      setMessages((prev) => [
-        ...prev,
-        { userName, avatar, text, sent: userName === user.userName },
-      ]);
-    });
+socket.on("messageReceived", ({ userName, avatar, text }) => {
+  setMessages((prev) => [
+    ...prev,
+    { userName, avatar, text, sent: userName === user.userName },
+  ]);
+});
+
 
     return () => {
       socket.disconnect();
@@ -50,7 +51,7 @@ const Chatroom = () => {
       targetUserID,
       text: newMessage,
     });
-
+    
     setNewMessage("");
   };
 

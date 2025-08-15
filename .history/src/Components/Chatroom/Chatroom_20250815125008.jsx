@@ -5,8 +5,10 @@ import { useSelector } from "react-redux";
 
 const Chatroom = () => {
   const { targetUserID } = useParams();
+  console.log("Target UserID ",targetUserID);
   const user = useSelector((store) => store.user);
-  const userID = user?._id;
+  const userID = user?.user?._id;
+  console.log("UserID:",userID);
 
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -27,12 +29,13 @@ const Chatroom = () => {
       targetUserID,
     });
 
-    socket.on("messageReceived", ({ userName, avatar, text }) => {
-      setMessages((prev) => [
-        ...prev,
-        { userName, avatar, text, sent: userName === user.userName },
-      ]);
-    });
+socket.on("messageReceived", ({ userName, avatar, text }) => {
+  setMessages((prev) => [
+    ...prev,
+    { userName, avatar, text, sent: userName === user.userName },
+  ]);
+});
+
 
     return () => {
       socket.disconnect();
@@ -50,7 +53,7 @@ const Chatroom = () => {
       targetUserID,
       text: newMessage,
     });
-
+    
     setNewMessage("");
   };
 
