@@ -6,6 +6,6 @@ export const createSocketConnection = () => {
   if (location.hostname === "localhost") {
     return io("http://localhost:3000");
   } else {
-    return io("/api/", { path: "/api/socket.io" });
+    return io("/", { path: "/api/socket.io" });
   }
 };
