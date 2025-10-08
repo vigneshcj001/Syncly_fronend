@@ -1,6 +1,1 @@
 # Syncly
-
-
-
-- icacls ".\Syncly-secret.pem" /inheritance:r /remove:g "Everyone" "NT AUTHORITY\Authenticated Users" "BUILTIN\Administrators" "BUILTIN\Users"
-- icacls ".\Syncly-secret.pem" /grant:r "vigne:(R)"
